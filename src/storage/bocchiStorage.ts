@@ -14,10 +14,12 @@ function normalizeSettings(value: unknown): Settings {
   const enabledCareKinds = Array.isArray(settings.enabledCareKinds)
     ? settings.enabledCareKinds.filter(isCareKind)
     : [...CARE_KINDS];
+  const name = typeof settings.name === "string" ? settings.name.trim().slice(0, 40) : undefined;
 
   return {
     hasCompletedOnboarding: Boolean(settings.hasCompletedOnboarding),
     enabledCareKinds,
+    name: name || undefined,
   };
 }
 

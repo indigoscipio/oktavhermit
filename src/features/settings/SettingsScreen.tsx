@@ -38,6 +38,18 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
     });
   }
 
+  function handleNameChange(name: string) {
+    const nextName = name.slice(0, 40);
+
+    onDataChange({
+      ...data,
+      settings: {
+        ...data.settings,
+        name: nextName.trim() ? nextName : undefined,
+      },
+    });
+  }
+
   function handleExport() {
     const blob = new Blob([exportBocchiData(data)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -61,6 +73,19 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
         <p className="text-sm uppercase tracking-wide text-muted">Settings</p>
         <h1 className="text-4xl font-bold text-ink">Keep Bocchi small.</h1>
         <p className="mt-3 text-lg text-muted">Choose what appears in your room.</p>
+      </Card>
+
+      <Card>
+        <label className="block text-2xl font-bold text-ink" htmlFor="settings-name">Name</label>
+        <input
+          id="settings-name"
+          className="focus-ring mt-3 w-full rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3 text-lg text-ink placeholder:text-muted"
+          type="text"
+          maxLength={40}
+          placeholder="Your name"
+          value={data.settings.name ?? ""}
+          onChange={(event) => handleNameChange(event.currentTarget.value)}
+        />
       </Card>
 
       <Card>

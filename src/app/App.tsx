@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CareScreen } from "../features/care/CareScreen";
 import { RoomScreen } from "../features/room/RoomScreen";
 import { SettingsScreen } from "../features/settings/SettingsScreen";
@@ -17,11 +17,20 @@ export function App() {
   const [data, setData] = useState<BocchiData>(() => loadBocchiData());
   const [activeTab, setActiveTab] = useState<Tab>("room");
   const [now, setNow] = useState(() => new Date());
-  const [message, setMessage] = useState("Open Bocchi. Care for your small world.");
+  const [message, setMessage] = useState<string | undefined>();
+  const toastTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+    };
   }, []);
 
   function updateData(nextData: BocchiData) {
@@ -29,28 +38,42 @@ export function App() {
     saveBocchiData(nextData);
   }
 
+  function showToast(nextMessage: string) {
+    setMessage(nextMessage);
+
+    if (toastTimerRef.current) {
+      window.clearTimeout(toastTimerRef.current);
+    }
+
+    toastTimerRef.current = window.setTimeout(() => setMessage(undefined), 2600);
+  }
+
   return (
-    <div className="min-h-screen bg-bg text-ink sm:flex sm:items-center sm:justify-center sm:p-4">
-      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col overflow-hidden bg-paper shadow-bocchi sm:min-h-[820px] sm:max-h-[calc(100vh-2rem)] sm:rounded-[2rem] sm:border sm:border-ink/10">
+    <div className="h-dvh overflow-hidden bg-bg text-ink">
+      <div className="mx-auto flex h-dvh w-full max-w-md flex-col bg-paper">
         <header className="flex-none border-b border-ink/10 bg-paper/95 px-5 py-4 text-center">
           <p className="text-3xl font-bold tracking-[0.18em] text-ink">bocchi</p>
         </header>
 
-        <main className="flex-1 overflow-y-auto px-4 pb-4 pt-4">
+        <main className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
           {activeTab === "room" ? (
-            <RoomScreen data={data} now={now} onDataChange={updateData} onMessage={setMessage} />
+            <RoomScreen data={data} now={now} onDataChange={updateData} onMessage={showToast} />
           ) : null}
           {activeTab === "care" ? <CareScreen data={data} now={now} /> : null}
           {activeTab === "settings" ? (
-            <SettingsScreen data={data} onDataChange={updateData} onMessage={setMessage} />
+            <SettingsScreen data={data} onDataChange={updateData} onMessage={showToast} />
           ) : null}
         </main>
 
-        <footer className="flex-none border-t border-ink/10 bg-panel/60 px-4 py-3 text-center text-sm text-muted" aria-live="polite">
-          {message}
-        </footer>
+        {message ? (
+          <div className="pointer-events-none fixed inset-x-0 bottom-24 z-30 mx-auto w-full max-w-md px-4" aria-live="polite">
+            <p className="rounded-full border border-ink/10 bg-ink px-4 py-3 text-center text-sm text-paper shadow-bocchi">
+              {message}
+            </p>
+          </div>
+        ) : null}
 
-        <nav className="grid flex-none grid-cols-3 border-t border-ink/10 bg-paper" aria-label="Main navigation">
+        <nav className="sticky bottom-0 z-20 grid flex-none grid-cols-3 border-t border-ink/10 bg-paper" aria-label="Main navigation">
             {tabs.map((tab) => (
               <button
                 key={tab.id}

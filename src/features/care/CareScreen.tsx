@@ -15,13 +15,14 @@ export function CareScreen({ data, now }: CareScreenProps) {
   const status = getTodayStatus(data, now);
   const isOutsideActive = Boolean(getActiveOutsideSession(data));
   const recentLogs = getRecentLogsForToday(data, now);
+  const intro = getCareIntro(status, isOutsideActive);
 
   return (
     <div className="space-y-5">
       <Card>
-        <p className="text-sm uppercase tracking-wide text-muted">Today</p>
-        <h1 className="text-4xl font-bold text-ink">Care, not a grade.</h1>
-        <p className="mt-3 text-lg text-muted">A simple mirror for today. No score. No pressure.</p>
+        <p className="text-sm uppercase tracking-wide text-muted">{intro.label}</p>
+        <h1 className="text-4xl font-bold text-ink">{intro.heading}</h1>
+        <p className="mt-3 text-lg text-muted">{intro.body}</p>
       </Card>
       <Card>
         <ul className="space-y-3">
@@ -48,6 +49,50 @@ export function CareScreen({ data, now }: CareScreenProps) {
       </Card>
     </div>
   );
+}
+
+function getCareIntro(status: ReturnType<typeof getTodayStatus>, isOutsideActive: boolean) {
+  if (isOutsideActive) {
+    return {
+      label: "Outside",
+      heading: "Your room will wait.",
+      body: "Come back whenever.",
+    };
+  }
+
+  const coreStatus = status.filter((item) => item.kind !== "outside");
+  const doneCount = coreStatus.filter((item) => item.isDoneToday).length;
+  const totalCount = coreStatus.length;
+
+  if (totalCount > 0 && doneCount === totalCount) {
+    return {
+      label: "Today",
+      heading: "Small world cared for.",
+      body: "Rest now. No need to do more.",
+    };
+  }
+
+  if (totalCount > 0 && doneCount >= Math.ceil(totalCount * 0.7)) {
+    return {
+      label: "Today",
+      heading: "The room feels warmer.",
+      body: "You can take it easy for a while.",
+    };
+  }
+
+  if (doneCount > 0) {
+    return {
+      label: "Today",
+      heading: "Small care counts.",
+      body: "You’ve cared for part of your small world today.",
+    };
+  }
+
+  return {
+    label: "Today",
+    heading: "Begin small.",
+    body: "One small action is enough to start.",
+  };
 }
 
 function getRecentLogsForToday(data: BocchiData, now: Date): CareLog[] {

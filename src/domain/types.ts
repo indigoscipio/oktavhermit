@@ -29,6 +29,7 @@ export type OutsideSession = {
 export type Settings = {
   hasCompletedOnboarding: boolean;
   enabledCareKinds: CareKind[];
+  name?: string;
 };
 
 export type BocchiData = {

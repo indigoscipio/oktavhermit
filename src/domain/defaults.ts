@@ -43,6 +43,7 @@ export function createDefaultData(): BocchiData {
     settings: {
       hasCompletedOnboarding: false,
       enabledCareKinds: [...DEFAULT_ENABLED_CARE_KINDS],
+      name: undefined,
     },
     careLogs: [],
     outsideSessions: [],

@@ -8,7 +8,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-warm text-paper shadow-bocchi hover:brightness-105",
+  primary: "bg-warm text-paper hover:brightness-105",
   secondary: "bg-paper text-ink border border-ink/15 hover:bg-panel",
   quiet: "bg-transparent text-muted hover:bg-paper/60",
   danger: "bg-blush text-ink border border-ink/15 hover:brightness-105",

@@ -11,7 +11,7 @@
   --color-room-floor: #e8c78e;
   --color-room-wall: #f7dfbf;
   --color-room-side: #d8ad82;
-  --shadow-soft: 0 18px 48px rgba(79, 56, 38, 0.16);
+  --shadow-soft: 0 10px 28px rgba(79, 56, 38, 0.1);
   --shadow-inset-room: inset 0 0 0 2px rgba(56, 45, 50, 0.12);
   --object-calm: #efd6a8;
   --object-needs: #f4b46f;
@@ -54,7 +54,7 @@
   min-height: 54px;
   border: 2px solid rgba(56, 45, 50, 0.22);
   background: var(--object-calm);
-  box-shadow: 0 8px 0 rgba(56, 45, 50, 0.1);
+  box-shadow: 0 3px 0 rgba(56, 45, 50, 0.08);
   transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
@@ -65,18 +65,18 @@
 
 .room-object[data-state="needs_care"] {
   background: var(--object-needs);
-  box-shadow: 0 0 0 4px rgba(244, 180, 111, 0.28), 0 0 18px rgba(201, 121, 77, 0.18), 0 8px 0 rgba(56, 45, 50, 0.1);
+  box-shadow: 0 0 0 4px rgba(244, 180, 111, 0.22), 0 0 12px rgba(201, 121, 77, 0.12), 0 3px 0 rgba(56, 45, 50, 0.08);
 }
 
 .room-object[data-state="done"] {
   background: var(--object-done);
   border-color: rgba(80, 105, 55, 0.38);
-  box-shadow: inset 0 -10px 0 rgba(255, 249, 236, 0.24), 0 8px 0 rgba(56, 45, 50, 0.08);
+  box-shadow: inset 0 -10px 0 rgba(255, 249, 236, 0.24), 0 3px 0 rgba(56, 45, 50, 0.06);
 }
 
 .room-object[data-state="active"] {
   background: var(--object-active);
-  box-shadow: 0 0 0 4px rgba(159, 200, 202, 0.32), 0 8px 0 rgba(56, 45, 50, 0.1);
+  box-shadow: 0 0 0 4px rgba(159, 200, 202, 0.26), 0 3px 0 rgba(56, 45, 50, 0.08);
 }
 
 .room-object[data-state="done"]::after {
@@ -118,8 +118,41 @@
   transform: translateX(-50%);
   border-radius: 16px 16px 10px 10px;
   background: #6c574e;
-  box-shadow: 0 7px 0 rgba(56, 45, 50, 0.16);
+  box-shadow: 0 4px 0 rgba(56, 45, 50, 0.1);
+  transition: box-shadow 160ms ease, transform 160ms ease;
 }
+
+.tiny-bocchi::before {
+  content: attr(data-bubble);
+  position: absolute;
+  left: 22px;
+  top: -24px;
+  min-width: 28px;
+  padding: 0.18rem 0.38rem;
+  border: 1px solid rgba(56, 45, 50, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 249, 236, 0.9);
+  color: var(--color-ink);
+  font-size: 0.75rem;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.tiny-bocchi[data-reaction]:not([data-reaction="idle"])::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tiny-bocchi[data-reaction="water"] { box-shadow: 0 0 0 5px rgba(168, 201, 197, 0.32), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="food"] { box-shadow: 0 0 0 5px rgba(201, 121, 77, 0.2), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="light"] { box-shadow: 0 0 0 5px rgba(244, 180, 111, 0.24), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="movement"] { transform: translateX(-50%) rotate(-4deg); box-shadow: 0 0 0 5px rgba(142, 160, 111, 0.24), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="hygiene"] { box-shadow: 0 0 0 5px rgba(168, 201, 197, 0.24), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="rest"] { box-shadow: 0 0 0 5px rgba(234, 220, 197, 0.8), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="room"] { box-shadow: 0 0 0 5px rgba(183, 201, 137, 0.28), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="back"] { box-shadow: 0 0 0 5px rgba(255, 249, 236, 0.85), 0 4px 0 rgba(56, 45, 50, 0.08); }
 
 @media (max-width: 640px) {
   .room-scene { min-height: 360px; }
@@ -136,6 +169,14 @@
 
 @media (prefers-reduced-motion: reduce) {
   .room-object {
+    transition: none;
+  }
+
+  .tiny-bocchi {
+    transition: none;
+  }
+
+  .tiny-bocchi::before {
     transition: none;
   }
 }

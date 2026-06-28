@@ -58,9 +58,11 @@ export function ObjectActionSheet({ object, onClose, onCareDone, onStartOutside 
     : isAlreadyDone
       ? alreadyDoneCopy[object.careKind] ?? actionCopy[object.careKind]
       : actionCopy[object.careKind];
-  const primaryCopy = isAlreadyDone && object.careKind === "water" || isAlreadyDone && object.careKind === "food"
-    ? "Add another"
-    : "Done";
+  const primaryCopy = isAlreadyDone && object.careKind === "rest"
+    ? "Yes, rest again"
+    : isAlreadyDone && (object.careKind === "water" || object.careKind === "food")
+      ? "Add another"
+      : "Done";
 
   return (
     <BottomSheet isOpen={Boolean(object)} title={CARE_LABELS[object.careKind]} onClose={onClose}>
