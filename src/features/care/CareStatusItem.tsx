@@ -1,5 +1,6 @@
 import { CARE_LABELS } from "../../domain/defaults";
 import type { CareStatus } from "../../domain/types";
+import { Icon } from "../../ui/Icon";
 
 type CareStatusItemProps = {
   status: CareStatus;
@@ -19,7 +20,10 @@ export function CareStatusItem({ status, isOutsideActive }: CareStatusItemProps)
 
   return (
     <li className="flex items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3">
-      <span className="text-lg font-semibold text-ink">{CARE_LABELS[status.kind]}</span>
+      <span className="flex items-center gap-3 text-lg font-semibold text-ink">
+        <Icon name={status.kind === "room" ? "room" : status.kind} size={22} />
+        {CARE_LABELS[status.kind]}
+      </span>
       <span className="rounded-full bg-paper px-3 py-1 text-sm text-muted">{label}</span>
     </li>
   );

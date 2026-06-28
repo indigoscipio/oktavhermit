@@ -4,6 +4,14 @@ import { createDefaultData, STORAGE_KEY } from "./defaults";
 import { getLocalDay } from "./dates";
 import { endOutsideSession, getActiveOutsideSession, startOutsideSession } from "./outside";
 import { deriveRoomState } from "./room";
+import type { RoomObjectConfig } from "./types";
+
+const testRoomObjects: RoomObjectConfig[] = [
+  { id: "cup", careKind: "water", label: "Cup", prompt: "Water first?" },
+  { id: "window", careKind: "light", label: "Window", prompt: "Visit the window?" },
+  { id: "shelf", careKind: "room", label: "Shelf", prompt: "Clear one small surface?" },
+  { id: "door", careKind: "outside", label: "Door", prompt: "Step out for a moment?" },
+];
 
 describe("date helpers", () => {
   it("returns a local YYYY-MM-DD day", () => {
@@ -92,16 +100,16 @@ describe("room state", () => {
       },
     };
 
-    const roomState = deriveRoomState(withoutWater, new Date(2026, 0, 1, 10, 0, 0));
+    const roomState = deriveRoomState(withoutWater, new Date(2026, 0, 1, 10, 0, 0), testRoomObjects);
 
     expect(roomState.objects.some((object) => object.careKind === "water")).toBe(false);
   });
 
   it("deriveRoomState changes object state after care log", () => {
     const now = new Date(2026, 0, 1, 10, 0, 0);
-    const before = deriveRoomState(createDefaultData(), now);
+    const before = deriveRoomState(createDefaultData(), now, testRoomObjects);
     const afterData = addCareLog(createDefaultData(), "water", { now });
-    const after = deriveRoomState(afterData, now);
+    const after = deriveRoomState(afterData, now, testRoomObjects);
 
     expect(before.objects.find((object) => object.objectId === "cup")?.state).toBe("needs_care");
     expect(after.objects.find((object) => object.objectId === "cup")?.state).toBe("done");

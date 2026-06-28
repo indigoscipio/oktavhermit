@@ -1,12 +1,13 @@
 import { CARE_LABELS } from "../../domain/defaults";
-import type { CareKind, RoomObjectState } from "../../domain/types";
+import type { CareKind } from "../../domain/types";
 import { BottomSheet } from "../../ui/BottomSheet";
 import { Button } from "../../ui/Button";
 import { useEffect, useState } from "react";
 import { getRandomOutsideGift, type OutsideGift } from "./outsideGifts";
+import type { RoomSceneObject } from "./RoomScene";
 
 type ObjectActionSheetProps = {
-  object: RoomObjectState | undefined;
+  object: RoomSceneObject | undefined;
   onClose: () => void;
   onCareDone: (kind: CareKind) => void;
   onStartOutside: () => void;

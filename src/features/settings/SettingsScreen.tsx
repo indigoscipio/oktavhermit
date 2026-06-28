@@ -5,6 +5,7 @@ import { exportBocchiData, resetBocchiData } from "../../storage/bocchiStorage";
 import { Button } from "../../ui/Button";
 import { Card } from "../../ui/Card";
 import { Dialog } from "../../ui/Dialog";
+import { Icon } from "../../ui/Icon";
 import { useState } from "react";
 
 type SettingsScreenProps = {
@@ -97,7 +98,10 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
 
             return (
               <label key={kind} className="flex items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3">
-                <span className="text-lg font-semibold text-ink">{CARE_LABELS[kind]}</span>
+                <span className="flex items-center gap-3 text-lg font-semibold text-ink">
+                  <Icon name={kind === "room" ? "room" : kind} size={22} />
+                  {CARE_LABELS[kind]}
+                </span>
                 <input
                   className="focus-ring h-6 w-6 accent-warm"
                   type="checkbox"
@@ -114,8 +118,8 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
       <Card>
         <h2 className="mb-3 text-2xl font-bold text-ink">Your data</h2>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Button onClick={handleExport}>Export data</Button>
-          <Button variant="danger" onClick={() => setIsClearOpen(true)}>Clear all data</Button>
+          <Button onClick={handleExport}><Icon name="export" size={20} className="mr-2" />Export data</Button>
+          <Button variant="danger" onClick={() => setIsClearOpen(true)}><Icon name="delete" size={20} className="mr-2" />Clear all data</Button>
         </div>
       </Card>
 

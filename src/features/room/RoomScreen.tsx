@@ -2,12 +2,13 @@ import { addCareLog, getLogsForDay } from "../../domain/care";
 import { getLocalDay } from "../../domain/dates";
 import { deriveRoomState } from "../../domain/room";
 import { endOutsideSession, getActiveOutsideSession, getOutsideElapsedSeconds, startOutsideSession } from "../../domain/outside";
-import type { BocchiData, CareKind, RoomObjectState } from "../../domain/types";
-import { Card } from "../../ui/Card";
+import type { BocchiData, CareKind } from "../../domain/types";
 import { useEffect, useRef, useState } from "react";
 import { ObjectActionSheet } from "./ObjectActionSheet";
 import { OutsidePanel } from "./OutsidePanel";
-import { RoomScene, type AvatarReaction } from "./RoomScene";
+import { RoomScene, type AvatarReaction, type RoomSceneObject } from "./RoomScene";
+import { ROOM_LAYOUT, ROOM_VIEW } from "./roomLayout";
+import { ROOM_OBJECTS } from "./roomObjects";
 
 type RoomScreenProps = {
   data: BocchiData;
@@ -38,7 +39,7 @@ const avatarReactionByKind: Partial<Record<CareKind, AvatarReaction>> = {
 };
 
 export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenProps) {
-  const roomState = deriveRoomState(data, now);
+  const roomState = deriveRoomState(data, now, ROOM_OBJECTS);
   const activeOutsideSession = getActiveOutsideSession(data);
   const [selectedObject, setSelectedObject] = useRoomSelection();
   const [avatarReaction, setAvatarReaction] = useState<AvatarReaction | undefined>();
@@ -105,25 +106,34 @@ export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenPro
   }
 
   return (
-    <div className="space-y-5">
-      <Card className="room-shell p-3 sm:p-5">
-        <div className="mb-4 px-1 text-ink">
-          <p className="text-sm uppercase tracking-wide text-muted">Room</p>
-          <h1 className="text-3xl font-bold">{roomTitle}</h1>
-        </div>
-        <RoomScene
-          objects={roomState.objects}
-          hasActiveOutsideSession={roomState.hasActiveOutsideSession}
-          avatarReaction={avatarReaction}
-          onObjectClick={setSelectedObject}
-        />
-      </Card>
+    <div className="room-screen">
+      <header className="room-screen-header">
+        <p className="text-sm uppercase tracking-wide text-muted">Room</p>
+        <h1 className="text-3xl font-bold text-ink">{roomTitle}</h1>
+      </header>
 
-      <Card>
-        <p className="text-lg text-muted">
+      <div className="room-viewport">
+        <div
+          className="room-layer"
+          style={{
+            "--room-zoom": String(ROOM_VIEW.zoom),
+            "--room-offset-x": `${ROOM_VIEW.offsetX}px`,
+            "--room-offset-y": `${ROOM_VIEW.offsetY}px`,
+          } as React.CSSProperties}
+        >
+          <RoomScene
+            objects={roomState.objects}
+            objectConfigs={ROOM_OBJECTS}
+            objectLayouts={ROOM_LAYOUT}
+            hasActiveOutsideSession={roomState.hasActiveOutsideSession}
+            avatarReaction={avatarReaction}
+            onObjectClick={setSelectedObject}
+          />
+        </div>
+        <p className="room-status-bubble">
           {isSmallWorldCaredFor ? "Small world cared for. Take it easy." : "Tap a room object. One tiny action is enough."}
         </p>
-      </Card>
+      </div>
 
       <ObjectActionSheet
         object={selectedObject}
@@ -136,5 +146,5 @@ export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenPro
 }
 
 function useRoomSelection() {
-  return useState<RoomObjectState | undefined>(undefined);
+  return useState<RoomSceneObject | undefined>(undefined);
 }

@@ -58,12 +58,17 @@ export type RoomObjectId =
   | "shelf"
   | "door";
 
+export type RoomObjectConfig = {
+  id: RoomObjectId;
+  careKind: CareKind;
+  label: string;
+  prompt: string;
+};
+
 export type RoomObjectState = {
   objectId: RoomObjectId;
   careKind: CareKind;
   state: "calm" | "needs_care" | "done" | "active";
-  label: string;
-  prompt: string;
 };
 
 export type RoomState = {

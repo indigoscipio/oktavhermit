@@ -4,13 +4,14 @@ import { RoomScreen } from "../features/room/RoomScreen";
 import { SettingsScreen } from "../features/settings/SettingsScreen";
 import { loadBocchiData, saveBocchiData } from "../storage/bocchiStorage";
 import type { BocchiData } from "../domain/types";
+import { Icon, type IconName } from "../ui/Icon";
 
 type Tab = "room" | "care" | "settings";
 
-const tabs: Array<{ id: Tab; label: string; mark: string }> = [
-  { id: "room", label: "Room", mark: "□" },
-  { id: "care", label: "Care", mark: "♡" },
-  { id: "settings", label: "Settings", mark: "◇" },
+const tabs: Array<{ id: Tab; label: string; icon: IconName }> = [
+  { id: "room", label: "Room", icon: "room" },
+  { id: "care", label: "Care", icon: "care" },
+  { id: "settings", label: "Settings", icon: "settings" },
 ];
 
 export function App() {
@@ -83,7 +84,7 @@ export function App() {
                 aria-current={activeTab === tab.id ? "page" : undefined}
               >
                 <span className={`flex h-9 w-9 items-center justify-center rounded-full text-xl ${activeTab === tab.id ? "bg-warm/20" : ""}`} aria-hidden="true">
-                  {tab.mark}
+                  <Icon name={tab.icon} size={24} />
                 </span>
                 <span>{tab.label}</span>
               </button>
