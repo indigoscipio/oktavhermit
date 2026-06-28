@@ -1,0 +1,141 @@
+:root {
+  --color-bg: #f7ecd8;
+  --color-ink: #342c2a;
+  --color-muted: #776a61;
+  --color-paper: #fff9ec;
+  --color-panel: #eadcc5;
+  --color-warm: #c9794d;
+  --color-moss: #8ea06f;
+  --color-blush: #e6aaa0;
+  --color-skysoft: #a8c9c5;
+  --color-room-floor: #e8c78e;
+  --color-room-wall: #f7dfbf;
+  --color-room-side: #d8ad82;
+  --shadow-soft: 0 18px 48px rgba(79, 56, 38, 0.16);
+  --shadow-inset-room: inset 0 0 0 2px rgba(56, 45, 50, 0.12);
+  --object-calm: #efd6a8;
+  --object-needs: #f4b46f;
+  --object-done: #b7c989;
+  --object-active: #9fc8ca;
+}
+
+.room-shell {
+  background: linear-gradient(145deg, #fff4dc, #f3d6b5);
+}
+
+.room-scene {
+  position: relative;
+  min-height: 430px;
+  overflow: hidden;
+  border: 2px solid rgba(56, 45, 50, 0.16);
+  background:
+    linear-gradient(150deg, transparent 54%, rgba(255, 249, 236, 0.5) 55%),
+    var(--color-room-wall);
+}
+
+.room-scene::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 10%;
+  bottom: 9%;
+  height: 44%;
+  transform: skewY(-8deg) rotate(-1deg);
+  transform-origin: bottom left;
+  border: 2px solid rgba(56, 45, 50, 0.16);
+  background: linear-gradient(135deg, var(--color-room-floor), #f0cd96);
+  box-shadow: var(--shadow-inset-room);
+}
+
+.room-object {
+  position: absolute;
+  z-index: 1;
+  min-width: 68px;
+  min-height: 54px;
+  border: 2px solid rgba(56, 45, 50, 0.22);
+  background: var(--object-calm);
+  box-shadow: 0 8px 0 rgba(56, 45, 50, 0.1);
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.room-object:hover,
+.room-object:focus-visible {
+  transform: translateY(-2px);
+}
+
+.room-object[data-state="needs_care"] {
+  background: var(--object-needs);
+  box-shadow: 0 0 0 4px rgba(244, 180, 111, 0.28), 0 0 18px rgba(201, 121, 77, 0.18), 0 8px 0 rgba(56, 45, 50, 0.1);
+}
+
+.room-object[data-state="done"] {
+  background: var(--object-done);
+  border-color: rgba(80, 105, 55, 0.38);
+  box-shadow: inset 0 -10px 0 rgba(255, 249, 236, 0.24), 0 8px 0 rgba(56, 45, 50, 0.08);
+}
+
+.room-object[data-state="active"] {
+  background: var(--object-active);
+  box-shadow: 0 0 0 4px rgba(159, 200, 202, 0.32), 0 8px 0 rgba(56, 45, 50, 0.1);
+}
+
+.room-object[data-state="done"]::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 249, 236, 0.85);
+}
+
+.object-cup { left: 23%; top: 48%; width: 72px; border-radius: 18px 18px 14px 14px; }
+.object-window { left: 17%; top: 13%; width: 92px; height: 82px; border-radius: 18px; }
+.object-food { right: 16%; top: 47%; width: 96px; border-radius: 18px 18px 10px 10px; }
+.object-bed { right: 15%; bottom: 17%; width: 132px; height: 74px; border-radius: 18px; }
+.object-floor { left: 38%; bottom: 14%; width: 118px; height: 42px; border-radius: 999px; }
+.object-sink { right: 13%; top: 18%; width: 76px; height: 84px; border-radius: 18px; }
+.object-shelf { left: 39%; top: 22%; width: 108px; height: 50px; border-radius: 12px; }
+.object-door { left: 7%; bottom: 17%; width: 82px; height: 128px; border-radius: 44px 44px 10px 10px; }
+
+.room-object-label {
+  display: block;
+  padding: 0.35rem 0.45rem;
+  color: var(--color-ink);
+  font-size: 0.86rem;
+  line-height: 1;
+  text-shadow: 0 1px rgba(255, 244, 223, 0.5);
+}
+
+.tiny-bocchi {
+  position: absolute;
+  left: 50%;
+  bottom: 32%;
+  z-index: 2;
+  width: 30px;
+  height: 42px;
+  transform: translateX(-50%);
+  border-radius: 16px 16px 10px 10px;
+  background: #6c574e;
+  box-shadow: 0 7px 0 rgba(56, 45, 50, 0.16);
+}
+
+@media (max-width: 640px) {
+  .room-scene { min-height: 360px; }
+  .room-object { min-width: 58px; min-height: 48px; }
+  .object-cup { left: 27%; top: 51%; }
+  .object-window { left: 15%; top: 12%; }
+  .object-food { right: 8%; top: 49%; }
+  .object-bed { right: 9%; bottom: 16%; width: 112px; }
+  .object-floor { left: 34%; bottom: 12%; width: 100px; }
+  .object-sink { right: 10%; top: 17%; }
+  .object-shelf { left: 38%; top: 24%; width: 94px; }
+  .object-door { left: 6%; bottom: 17%; width: 72px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-object {
+    transition: none;
+  }
+}
