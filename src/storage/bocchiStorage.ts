@@ -82,9 +82,13 @@ export function normalizeBocchiData(value: unknown): BocchiData {
       .map(normalizeOutsideSession)
       .filter((session): session is OutsideSession => Boolean(session))
     : [];
+  const startedAt = typeof data.startedAt === "string" && Number.isFinite(new Date(data.startedAt).getTime())
+    ? data.startedAt
+    : new Date().toISOString();
 
   return {
     version: 1,
+    startedAt,
     settings: normalizeSettings(data.settings),
     careLogs,
     outsideSessions,

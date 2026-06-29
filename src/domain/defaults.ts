@@ -40,6 +40,7 @@ export const DEFAULT_CARE_VALUES: Record<CareKind, { value: number; unit: CareUn
 export function createDefaultData(): BocchiData {
   return {
     version: 1,
+    startedAt: new Date().toISOString(),
     settings: {
       hasCompletedOnboarding: false,
       enabledCareKinds: [...DEFAULT_ENABLED_CARE_KINDS],

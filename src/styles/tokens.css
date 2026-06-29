@@ -40,7 +40,7 @@
   min-height: 520px;
   overflow: hidden;
   margin-inline: -1rem;
-  background: linear-gradient(180deg, #fff3dc, #f2c99d);
+  background: transparent;
 }
 
 .room-layer {
@@ -61,7 +61,7 @@
   overflow: hidden;
   border: 0;
   border-radius: 0;
-  background: #f4d1aa;
+  background: transparent;
 }
 
 .room-status-bubble {
@@ -149,11 +149,10 @@
   position: absolute;
   left: var(--room-sprite-x);
   top: var(--room-sprite-y);
-  width: var(--room-sprite-w);
-  height: var(--room-sprite-h);
+  width: var(--room-sprite-size);
+  height: auto;
   min-width: 28px;
-  min-height: 24px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scaleX(var(--room-sprite-scale-x, 1));
   transition: filter 160ms ease, opacity 160ms ease;
 }
 
@@ -173,7 +172,7 @@
 .avatar-asset {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: contain;
 }
 
@@ -259,8 +258,8 @@
   left: var(--avatar-x);
   top: var(--avatar-y);
   z-index: 5;
-  width: var(--avatar-w);
-  height: var(--avatar-h);
+  width: var(--avatar-size);
+  height: auto;
   transform: translateX(-50%);
   border-radius: 16px 16px 10px 10px;
   background: transparent;

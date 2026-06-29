@@ -34,6 +34,7 @@ export type Settings = {
 
 export type BocchiData = {
   version: 1;
+  startedAt: string;
   settings: Settings;
   careLogs: CareLog[];
   outsideSessions: OutsideSession[];

@@ -56,7 +56,7 @@ export function RoomScene({
   });
 
   return (
-    <div className={`room-scene rounded-bocchi shadow-insetRoom ${SHOW_HOTSPOTS ? "debug-hotspots" : ""}`} aria-label="Bocchi room">
+    <div className={`room-scene ${SHOW_HOTSPOTS ? "debug-hotspots" : ""}`} aria-label="Bocchi room">
       <RoomShell assets={assets} />
       <RoomObjectSprites objects={sceneObjects} assets={assets} />
       <RoomInteractionLayer objects={sceneObjects} onObjectClick={onObjectClick} />

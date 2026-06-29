@@ -1,6 +1,7 @@
 import type { SVGProps } from "react";
 import {
   Check,
+  ChevronRight,
   Close,
   CloudSun,
   Coffee,
@@ -30,6 +31,7 @@ export type IconName =
   | "export"
   | "delete"
   | "done"
+  | "chevronRight"
   | "close";
 
 type IconProps = SVGProps<SVGSVGElement> & {
@@ -51,6 +53,7 @@ const iconMap = {
   export: Download,
   delete: Trash,
   done: Check,
+  chevronRight: ChevronRight,
   close: Close,
 };
 

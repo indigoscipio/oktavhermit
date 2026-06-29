@@ -24,6 +24,24 @@ const actionCopy: Record<CareKind, string> = {
   outside: "Step out for a moment?",
 };
 
+const firstActionCopy: Record<CareKind, string> = {
+  water: "Yes, drink",
+  light: "Yes, receive light",
+  food: "Yes, eat",
+  movement: "Yes, stretch",
+  hygiene: "Yes, wash up",
+  rest: "Yes, rest",
+  room: "Yes, clean room",
+  outside: "Start outside",
+};
+
+const repeatActionCopy: Partial<Record<CareKind, string>> = {
+  water: "Add another",
+  food: "Add another",
+  movement: "Yes, stretch again",
+  rest: "Yes, rest again",
+};
+
 const repeatableCareKinds: CareKind[] = ["water", "food", "movement", "rest", "outside"];
 
 const alreadyDoneCopy: Partial<Record<CareKind, string>> = {
@@ -59,11 +77,9 @@ export function ObjectActionSheet({ object, onClose, onCareDone, onStartOutside 
     : isAlreadyDone
       ? alreadyDoneCopy[object.careKind] ?? actionCopy[object.careKind]
       : actionCopy[object.careKind];
-  const primaryCopy = isAlreadyDone && object.careKind === "rest"
-    ? "Yes, rest again"
-    : isAlreadyDone && (object.careKind === "water" || object.careKind === "food")
-      ? "Add another"
-      : "Done";
+  const primaryCopy = isAlreadyDone
+    ? repeatActionCopy[object.careKind] ?? firstActionCopy[object.careKind]
+    : firstActionCopy[object.careKind];
 
   return (
     <BottomSheet isOpen={Boolean(object)} title={CARE_LABELS[object.careKind]} onClose={onClose}>

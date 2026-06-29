@@ -6,7 +6,7 @@ import { Button } from "../../ui/Button";
 import { Card } from "../../ui/Card";
 import { Dialog } from "../../ui/Dialog";
 import { Icon } from "../../ui/Icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type SettingsScreenProps = {
   data: BocchiData;
@@ -16,7 +16,12 @@ type SettingsScreenProps = {
 
 export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreenProps) {
   const [isClearOpen, setIsClearOpen] = useState(false);
+  const [draftName, setDraftName] = useState(data.settings.name ?? "");
   const activeOutside = getActiveOutsideSession(data);
+
+  useEffect(() => {
+    setDraftName(data.settings.name ?? "");
+  }, [data.settings.name]);
 
   function toggleCareKind(kind: CareKind) {
     const isEnabled = data.settings.enabledCareKinds.includes(kind);
@@ -39,8 +44,8 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
     });
   }
 
-  function handleNameChange(name: string) {
-    const nextName = name.slice(0, 40);
+  function handleNameSave() {
+    const nextName = draftName.slice(0, 40);
 
     onDataChange({
       ...data,
@@ -49,6 +54,7 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
         name: nextName.trim() ? nextName : undefined,
       },
     });
+    onMessage("Name updated.");
   }
 
   function handleExport() {
@@ -78,41 +84,52 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
 
       <Card>
         <label className="block text-2xl font-bold text-ink" htmlFor="settings-name">Name</label>
-        <input
-          id="settings-name"
-          className="focus-ring mt-3 w-full rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3 text-lg text-ink placeholder:text-muted"
-          type="text"
-          maxLength={40}
-          placeholder="Your name"
-          value={data.settings.name ?? ""}
-          onChange={(event) => handleNameChange(event.currentTarget.value)}
-        />
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+          <input
+            id="settings-name"
+            className="focus-ring min-w-0 flex-1 rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3 text-lg text-ink placeholder:text-muted"
+            type="text"
+            maxLength={40}
+            placeholder="Your name"
+            value={draftName}
+            onChange={(event) => setDraftName(event.currentTarget.value.slice(0, 40))}
+          />
+          <Button onClick={handleNameSave}>Save name</Button>
+        </div>
       </Card>
 
       <Card>
-        <h2 className="mb-4 text-2xl font-bold text-ink">Care areas</h2>
-        <div className="space-y-3">
-          {CARE_KINDS.map((kind) => {
-            const checked = data.settings.enabledCareKinds.includes(kind);
-            const disabled = kind === "outside" && Boolean(activeOutside) && checked;
+        <details className="group">
+          <summary className="focus-ring flex cursor-pointer list-none items-start justify-between gap-4 rounded-2xl">
+            <span>
+              <h2 className="text-2xl font-bold text-ink">Care areas</h2>
+              <p className="mt-1 text-muted">Choose which care areas appear in Today.</p>
+            </span>
+            <Icon name="chevronRight" size={22} className="mt-1 shrink-0 text-muted transition-transform group-open:rotate-90" />
+          </summary>
+          <div className="mt-4 space-y-3">
+            {CARE_KINDS.map((kind) => {
+              const checked = data.settings.enabledCareKinds.includes(kind);
+              const disabled = kind === "outside" && Boolean(activeOutside) && checked;
 
-            return (
-              <label key={kind} className="flex items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3">
-                <span className="flex items-center gap-3 text-lg font-semibold text-ink">
-                  <Icon name={kind === "room" ? "room" : kind} size={22} />
-                  {CARE_LABELS[kind]}
-                </span>
-                <input
-                  className="focus-ring h-6 w-6 accent-warm"
-                  type="checkbox"
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={() => toggleCareKind(kind)}
-                />
-              </label>
-            );
-          })}
-        </div>
+              return (
+                <label key={kind} className="flex items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3">
+                  <span className="flex items-center gap-3 text-lg font-semibold text-ink">
+                    <Icon name={kind === "room" ? "room" : kind} size={22} />
+                    {CARE_LABELS[kind]}
+                  </span>
+                  <input
+                    className="focus-ring h-6 w-6 accent-warm"
+                    type="checkbox"
+                    checked={checked}
+                    disabled={disabled}
+                    onChange={() => toggleCareKind(kind)}
+                  />
+                </label>
+              );
+            })}
+          </div>
+        </details>
       </Card>
 
       <Card>

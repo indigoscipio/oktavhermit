@@ -13,8 +13,7 @@ export function AvatarLayer({ assets, reaction, bubble }: AvatarLayerProps) {
   const style = {
     "--avatar-x": `${AVATAR_LAYOUT.x}%`,
     "--avatar-y": `${AVATAR_LAYOUT.y}%`,
-    "--avatar-w": `${AVATAR_LAYOUT.w}%`,
-    "--avatar-h": `${AVATAR_LAYOUT.h}%`,
+    "--avatar-size": `${AVATAR_LAYOUT.size}%`,
     zIndex: AVATAR_LAYOUT.z,
   } as CSSProperties;
 

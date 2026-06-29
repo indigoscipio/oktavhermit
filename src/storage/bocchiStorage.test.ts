@@ -9,25 +9,25 @@ describe("bocchi storage", () => {
   });
 
   it("default data loads when storage is empty", () => {
-    expect(loadBocchiData()).toEqual(createDefaultData());
+    expectDefaultData(loadBocchiData());
   });
 
   it("corrupted storage does not crash", () => {
     localStorage.setItem(STORAGE_KEY, "not json");
 
-    expect(loadBocchiData()).toEqual(createDefaultData());
+    expectDefaultData(loadBocchiData());
   });
 
   it("missing fields are normalized safely", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1 }));
 
-    expect(loadBocchiData()).toEqual(createDefaultData());
+    expectDefaultData(loadBocchiData());
   });
 
   it("older version returns default data", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 0, careLogs: [{ kind: "water" }] }));
 
-    expect(loadBocchiData()).toEqual(createDefaultData());
+    expectDefaultData(loadBocchiData());
   });
 
   it("saves and exports complete Bocchi data", () => {
@@ -43,7 +43,18 @@ describe("bocchi storage", () => {
     saveBocchiData(addCareLog(createDefaultData(), "water"));
     const reset = resetBocchiData();
 
-    expect(reset).toEqual(createDefaultData());
-    expect(loadBocchiData()).toEqual(createDefaultData());
+    expectDefaultData(reset);
+    expectDefaultData(loadBocchiData());
   });
 });
+
+function expectDefaultData(data: ReturnType<typeof createDefaultData>) {
+  expect(data).toMatchObject({
+    version: 1,
+    settings: createDefaultData().settings,
+    careLogs: [],
+    outsideSessions: [],
+  });
+  expect(typeof data.startedAt).toBe("string");
+  expect(Number.isFinite(new Date(data.startedAt).getTime())).toBe(true);
+}

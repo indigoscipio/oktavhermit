@@ -1,5 +1,5 @@
 import { addCareLog, getLogsForDay } from "../../domain/care";
-import { getLocalDay } from "../../domain/dates";
+import { formatDisplayDate, getAppDayNumber, getLocalDay } from "../../domain/dates";
 import { deriveRoomState } from "../../domain/room";
 import { endOutsideSession, getActiveOutsideSession, getOutsideElapsedSeconds, startOutsideSession } from "../../domain/outside";
 import type { BocchiData, CareKind } from "../../domain/types";
@@ -47,6 +47,7 @@ export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenPro
   const coreObjects = roomState.objects.filter((object) => object.careKind !== "outside");
   const isSmallWorldCaredFor = coreObjects.length > 0 && coreObjects.every((object) => object.state === "done");
   const roomTitle = data.settings.name ? `${data.settings.name}'s room` : "Care for your small world";
+  const roomDayLabel = `Day ${getAppDayNumber(data.startedAt, now)} · ${formatDisplayDate(now)}`;
 
   useEffect(() => {
     return () => {
@@ -110,6 +111,7 @@ export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenPro
       <header className="room-screen-header">
         <p className="text-sm uppercase tracking-wide text-muted">Room</p>
         <h1 className="text-3xl font-bold text-ink">{roomTitle}</h1>
+        <p className="mt-1 text-sm text-muted">{roomDayLabel}</p>
       </header>
 
       <div className="room-viewport">
