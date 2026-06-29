@@ -4,7 +4,9 @@ import { RoomScreen } from "../features/room/RoomScreen";
 import { SettingsScreen } from "../features/settings/SettingsScreen";
 import { loadBocchiData, saveBocchiData } from "../storage/bocchiStorage";
 import type { BocchiData } from "../domain/types";
+import { Button } from "../ui/Button";
 import { Icon, type IconName } from "../ui/Icon";
+import { LandingPage } from "./LandingPage";
 
 type Tab = "room" | "care" | "settings";
 
@@ -15,6 +17,16 @@ const tabs: Array<{ id: Tab; label: string; icon: IconName }> = [
 ];
 
 export function App() {
+  const path = window.location.pathname;
+
+  if (path !== "/app" && path !== "/app/") {
+    return <LandingPage />;
+  }
+
+  return <BocchiApp />;
+}
+
+function BocchiApp() {
   const [data, setData] = useState<BocchiData>(() => loadBocchiData());
   const [activeTab, setActiveTab] = useState<Tab>("room");
   const [now, setNow] = useState(() => new Date());
@@ -49,6 +61,16 @@ export function App() {
     toastTimerRef.current = window.setTimeout(() => setMessage(undefined), 2600);
   }
 
+  function handleBeginOnboarding() {
+    updateData({
+      ...data,
+      settings: {
+        ...data.settings,
+        hasCompletedOnboarding: true,
+      },
+    });
+  }
+
   return (
     <div className="h-dvh overflow-hidden bg-bg text-ink">
       <div className="mx-auto flex h-dvh w-full max-w-md flex-col bg-paper">
@@ -58,7 +80,7 @@ export function App() {
 
         <main className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
           {activeTab === "room" ? (
-            <RoomScreen data={data} now={now} onDataChange={updateData} onMessage={showToast} />
+            <RoomScreen data={data} now={now} onDataChange={updateData} onMessage={showToast} disableIdleHint={!data.settings.hasCompletedOnboarding} />
           ) : null}
           {activeTab === "care" ? <CareScreen data={data} now={now} /> : null}
           {activeTab === "settings" ? (
@@ -90,6 +112,19 @@ export function App() {
               </button>
             ))}
           </nav>
+
+        {!data.settings.hasCompletedOnboarding ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 p-4 backdrop-blur-sm">
+            <div role="dialog" aria-modal="true" aria-labelledby="onboarding-title" className="w-full max-w-sm rounded-bocchi border border-ink/10 bg-paper p-5 shadow-bocchi">
+              <h2 id="onboarding-title" className="text-2xl font-bold text-ink">Welcome to Bocchi.</h2>
+              <p className="mt-4 text-lg leading-relaxed text-muted">
+                This is your small room. Tap objects to log tiny care: the cup for water, the window for light, the bed for rest, and the door for outside.
+              </p>
+              <p className="mt-3 text-lg leading-relaxed text-muted">No streaks. No pressure. Just small care.</p>
+              <Button className="mt-5 w-full" onClick={handleBeginOnboarding}>Begin</Button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

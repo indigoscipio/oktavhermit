@@ -168,6 +168,10 @@
   filter: drop-shadow(0 0 7px rgba(91, 134, 139, 0.5));
 }
 
+.room-object-sprite[data-hovered="true"] {
+  filter: brightness(1.16) saturate(1.08) drop-shadow(0 0 3px rgba(255, 249, 236, 0.95)) drop-shadow(0 0 10px rgba(255, 214, 145, 0.8)) drop-shadow(0 0 18px rgba(201, 121, 77, 0.55));
+}
+
 .room-object-asset,
 .avatar-asset {
   display: block;
@@ -219,14 +223,32 @@
 
 .room-hotspot:hover,
 .room-hotspot:focus-visible {
-  border-color: rgba(255, 249, 236, 0.9);
-  background: rgba(255, 249, 236, 0.08);
-  box-shadow: 0 0 0 3px rgba(201, 121, 77, 0.16);
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
 }
 
 .room-hotspot[data-state="needs_care"]:hover,
 .room-hotspot[data-state="needs_care"]:focus-visible {
-  box-shadow: 0 0 0 3px rgba(201, 121, 77, 0.22);
+  box-shadow: none;
+}
+
+.room-idle-hint {
+  position: absolute;
+  left: calc(var(--room-hint-x) + var(--room-hint-offset-x));
+  top: calc(var(--room-hint-y) + var(--room-hint-offset-y));
+  display: flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(56, 45, 50, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 249, 236, 0.9);
+  color: var(--color-ink);
+  box-shadow: 0 6px 16px rgba(79, 56, 38, 0.12);
+  pointer-events: none;
 }
 
 .room-hotspot-debug-label {
@@ -247,6 +269,13 @@
 .debug-hotspots .room-hotspot {
   border-color: rgba(201, 121, 77, 0.55);
   background: rgba(255, 249, 236, 0.16);
+}
+
+.debug-hotspots .room-hotspot:hover,
+.debug-hotspots .room-hotspot:focus-visible {
+  border-color: rgba(255, 249, 236, 0.9);
+  background: rgba(255, 249, 236, 0.22);
+  box-shadow: 0 0 0 3px rgba(201, 121, 77, 0.16);
 }
 
 .debug-hotspots .room-hotspot-debug-label {
@@ -305,7 +334,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .room-object-sprite,
-  .room-hotspot {
+  .room-hotspot,
+  .room-idle-hint {
     transition: none;
   }
 

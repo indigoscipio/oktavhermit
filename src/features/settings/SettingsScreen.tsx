@@ -105,7 +105,7 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
               <h2 className="text-2xl font-bold text-ink">Care areas</h2>
               <p className="mt-1 text-muted">Choose which care areas appear in Today.</p>
             </span>
-            <Icon name="chevronRight" size={22} className="mt-1 shrink-0 text-muted transition-transform group-open:rotate-90" />
+            <Icon name="chevronDown" size={22} className="mt-1 shrink-0 text-muted transition-transform group-open:rotate-180" />
           </summary>
           <div className="mt-4 space-y-3">
             {CARE_KINDS.map((kind) => {

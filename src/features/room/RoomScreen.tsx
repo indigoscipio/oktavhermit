@@ -2,7 +2,7 @@ import { addCareLog, getLogsForDay } from "../../domain/care";
 import { formatDisplayDate, getAppDayNumber, getLocalDay } from "../../domain/dates";
 import { deriveRoomState } from "../../domain/room";
 import { endOutsideSession, getActiveOutsideSession, getOutsideElapsedSeconds, startOutsideSession } from "../../domain/outside";
-import type { BocchiData, CareKind } from "../../domain/types";
+import type { BocchiData, CareKind, RoomObjectId } from "../../domain/types";
 import { useEffect, useRef, useState } from "react";
 import { ObjectActionSheet } from "./ObjectActionSheet";
 import { OutsidePanel } from "./OutsidePanel";
@@ -15,6 +15,7 @@ type RoomScreenProps = {
   now: Date;
   onDataChange: (data: BocchiData) => void;
   onMessage: (message: string) => void;
+  disableIdleHint?: boolean;
 };
 
 const doneCopy: Record<CareKind, string> = {
@@ -38,13 +39,26 @@ const avatarReactionByKind: Partial<Record<CareKind, AvatarReaction>> = {
   room: "room",
 };
 
-export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenProps) {
+const DEBUG_IDLE_HINT = false;
+const IDLE_HINT_DELAY_MS = DEBUG_IDLE_HINT ? 800 : 24000;
+const IDLE_HINT_VISIBLE_MS = DEBUG_IDLE_HINT ? 999999 : 5200;
+
+export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint = false }: RoomScreenProps) {
   const roomState = deriveRoomState(data, now, ROOM_OBJECTS);
   const activeOutsideSession = getActiveOutsideSession(data);
   const [selectedObject, setSelectedObject] = useRoomSelection();
   const [avatarReaction, setAvatarReaction] = useState<AvatarReaction | undefined>();
+  const [idleHintObjectId, setIdleHintObjectId] = useState<RoomObjectId | undefined>();
   const avatarTimerRef = useRef<number | undefined>(undefined);
+  const idleTimerRef = useRef<number | undefined>(undefined);
+  const idleHideTimerRef = useRef<number | undefined>(undefined);
   const coreObjects = roomState.objects.filter((object) => object.careKind !== "outside");
+  const idleCandidateObjectId = roomState.objects.find((object) => object.state === "needs_care")?.objectId;
+  const idleHintObjectIds = DEBUG_IDLE_HINT
+    ? roomState.objects.map((object) => object.objectId)
+    : idleHintObjectId
+      ? [idleHintObjectId]
+      : undefined;
   const isSmallWorldCaredFor = coreObjects.length > 0 && coreObjects.every((object) => object.state === "done");
   const roomTitle = data.settings.name ? `${data.settings.name}'s room` : "Care for your small world";
   const roomDayLabel = `Day ${getAppDayNumber(data.startedAt, now)} · ${formatDisplayDate(now)}`;
@@ -54,8 +68,52 @@ export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenPro
       if (avatarTimerRef.current) {
         window.clearTimeout(avatarTimerRef.current);
       }
+
+      if (idleTimerRef.current) {
+        window.clearTimeout(idleTimerRef.current);
+      }
+
+      if (idleHideTimerRef.current) {
+        window.clearTimeout(idleHideTimerRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    function clearIdleTimers() {
+      if (idleTimerRef.current) {
+        window.clearTimeout(idleTimerRef.current);
+      }
+
+      if (idleHideTimerRef.current) {
+        window.clearTimeout(idleHideTimerRef.current);
+      }
+    }
+
+    function scheduleIdleHint() {
+      clearIdleTimers();
+      setIdleHintObjectId(undefined);
+
+      if (disableIdleHint || !idleCandidateObjectId || selectedObject || activeOutsideSession) {
+        return;
+      }
+
+      idleTimerRef.current = window.setTimeout(() => {
+        setIdleHintObjectId(idleCandidateObjectId);
+        idleHideTimerRef.current = window.setTimeout(() => setIdleHintObjectId(undefined), IDLE_HINT_VISIBLE_MS);
+      }, IDLE_HINT_DELAY_MS);
+    }
+
+    scheduleIdleHint();
+    window.addEventListener("pointerdown", scheduleIdleHint);
+    window.addEventListener("keydown", scheduleIdleHint);
+
+    return () => {
+      clearIdleTimers();
+      window.removeEventListener("pointerdown", scheduleIdleHint);
+      window.removeEventListener("keydown", scheduleIdleHint);
+    };
+  }, [activeOutsideSession, disableIdleHint, idleCandidateObjectId, selectedObject]);
 
   function showAvatarReaction(reaction: AvatarReaction | undefined) {
     if (!reaction) {
@@ -129,6 +187,7 @@ export function RoomScreen({ data, now, onDataChange, onMessage }: RoomScreenPro
             objectLayouts={ROOM_LAYOUT}
             hasActiveOutsideSession={roomState.hasActiveOutsideSession}
             avatarReaction={avatarReaction}
+            idleHintObjectIds={idleHintObjectIds}
             onObjectClick={setSelectedObject}
           />
         </div>

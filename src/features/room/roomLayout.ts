@@ -16,29 +16,35 @@ export type RoomHotspotBox = {
   z?: number;
 };
 
+export type RoomHintOffset = {
+  x?: number;
+  y?: number;
+};
+
 export type RoomObjectLayout = {
   id: RoomObjectId;
   sprite: RoomSpriteBox;
   hotspot?: RoomHotspotBox;
+  hint?: RoomHintOffset;
 };
 
-export const SHOW_HOTSPOTS = true;
+export const SHOW_HOTSPOTS = false;
 
 export const ROOM_LAYOUT: RoomObjectLayout[] = [
-  { id: "window", sprite: { x: 70, y: 33, z: 2, size: 26, flipX: true} },
-  { id: "shelf", sprite: { x: 25, y: 55, z: 2, size: 40, flipX: true } },
-  { id: "door", sprite: { x: 70, y: 68, z: 2, size: 50, flipX: true }, hotspot: { x: 80, y: 43, z: 10, w: 10, h: 10 } },
-  { id: "bed", sprite: { x: 47, y: 50, z: 1, size: 40 }, hotspot: { x: 66, y: 64, z: 10, w: 10, h: 10 } },
-  { id: "cup", sprite: { x: 43, y: 55, z: 6, size: 25 }, hotspot: { x: 43, y: 55, z: 10, w: 10, h:10 } },
-  { id: "sink", sprite: { x: 22, y: 63, z: 4, size: 25 } },
-  { id: "food", sprite: { x: 31, y: 77, z: 5, size: 21 }, hotspot: { x: 31, y: 77, z: 10, w: 10, h: 10 } },
-  { id: "floor", sprite: { x: 53, y: 80, z: 3, size: 31 }, hotspot: { x: 53, y: 80, z: 10, w: 10, h: 10 } },
+  { id: "window", sprite: { x: 70, y: 33, z: 2, size: 30, flipX: true}, hotspot: { x: 70, y: 33, z: 10, w: 17, h: 25 }, hint: { x: 0, y: 5 } },
+  { id: "shelf", sprite: { x: 22, y: 58, z: 1, size: 40, flipX: true }, hotspot: { x: 22, y: 58, z: 10, w: 20, h: 25 }, hint: { x: 0, y: 10 } },
+  { id: "door", sprite: { x: 65, y: 70, z: 2, size: 50, flipX: true }, hotspot: { x: 65, y: 70, z: 10, w: 15, h: 32}, hint: { x: 0, y: 25 } },
+  { id: "bed", sprite: { x: 47, y: 50, z: 1, size: 40 }, hotspot: { x: 47, y: 50, z: 10, w: 30, h: 25 }, hint: { x: 0, y: 0 } },
+  { id: "cup", sprite: { x: 35, y: 75, z: 3, size: 30 }, hotspot: { x: 35, y: 75, z: 10, w: 20, h:20 }, hint: { x: 0, y: 0 } },
+  { id: "sink", sprite: { x: 80, y: 63, z: 2, size: 30 }, hotspot: { x: 80, y: 63, z: 10, w: 15, h:20 }, hint: { x: 0, y: 0 }},
+  { id: "food", sprite: { x: 67, y: 57, z: 2, size: 32 }, hotspot: { x: 67, y: 53, z: 10, w: 20, h: 15 }, hint: { x: 0, y: 0 } },
+  { id: "floor", sprite: { x: 56, y: 70, z: 1, size: 35 }, hotspot: { x: 56, y: 70, z: 10, w: 25, h: 16 }, hint: { x: 0, y: 0 } },
 ];
 
 export const AVATAR_LAYOUT = { x: 50, y: 35, z: 5, size: 40 };
 
 export const ROOM_VIEW = {
-  zoom: 1,
+  zoom: 1.2,
   offsetX: 0,
   offsetY: 0,
 };

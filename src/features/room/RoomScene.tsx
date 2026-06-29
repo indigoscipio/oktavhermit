@@ -1,4 +1,6 @@
-import type { RoomObjectConfig, RoomObjectState } from "../../domain/types";
+import { useState, type CSSProperties } from "react";
+import type { RoomObjectConfig, RoomObjectId, RoomObjectState } from "../../domain/types";
+import { Icon } from "../../ui/Icon";
 import { SHOW_HOTSPOTS, type RoomObjectLayout } from "./roomLayout";
 import { AvatarLayer } from "./AvatarLayer";
 import { DEFAULT_ROOM_ASSETS, type RoomAssetMap } from "./roomAssets";
@@ -15,6 +17,7 @@ type RoomSceneProps = {
   assets?: RoomAssetMap;
   hasActiveOutsideSession: boolean;
   avatarReaction?: AvatarReaction;
+  idleHintObjectIds?: RoomObjectId[];
   onObjectClick: (object: RoomSceneObject) => void;
 };
 
@@ -35,6 +38,13 @@ const reactionBubble: Record<AvatarReaction, string> = {
   back: "back",
 };
 
+type RoomHintStyle = CSSProperties & {
+  "--room-hint-x": string;
+  "--room-hint-y": string;
+  "--room-hint-offset-x": string;
+  "--room-hint-offset-y": string;
+};
+
 export function RoomScene({
   objects,
   objectConfigs,
@@ -42,8 +52,10 @@ export function RoomScene({
   assets = DEFAULT_ROOM_ASSETS,
   hasActiveOutsideSession,
   avatarReaction,
+  idleHintObjectIds = [],
   onObjectClick,
 }: RoomSceneProps) {
+  const [hoveredObjectId, setHoveredObjectId] = useState<RoomObjectId | null>(null);
   const sceneObjects = objects.flatMap((state): RoomSceneObject[] => {
     const object = objectConfigs.find((config) => config.id === state.objectId);
     const layout = objectLayouts.find((item) => item.id === state.objectId);
@@ -54,12 +66,28 @@ export function RoomScene({
 
     return [{ ...object, objectId: state.objectId, state: state.state, layout }];
   });
+  const hintObjects = sceneObjects.filter((object) => idleHintObjectIds.includes(object.id));
 
   return (
     <div className={`room-scene ${SHOW_HOTSPOTS ? "debug-hotspots" : ""}`} aria-label="Bocchi room">
       <RoomShell assets={assets} />
-      <RoomObjectSprites objects={sceneObjects} assets={assets} />
-      <RoomInteractionLayer objects={sceneObjects} onObjectClick={onObjectClick} />
+      <RoomObjectSprites objects={sceneObjects} assets={assets} hoveredObjectId={hoveredObjectId ?? idleHintObjectIds[0] ?? null} />
+      <RoomInteractionLayer objects={sceneObjects} onObjectClick={onObjectClick} onObjectHoverChange={setHoveredObjectId} />
+      {hintObjects.map((hintObject) => {
+        const hintStyle = {
+          "--room-hint-x": `${hintObject.layout.sprite.x}%`,
+          "--room-hint-y": `${hintObject.layout.sprite.y - (hintObject.layout.sprite.size / 2)}%`,
+          "--room-hint-offset-x": `${hintObject.layout.hint?.x ?? 0}px`,
+          "--room-hint-offset-y": `${hintObject.layout.hint?.y ?? -12}px`,
+          zIndex: (hintObject.layout.sprite.z ?? 1) + 8,
+        } as RoomHintStyle;
+
+        return (
+          <div key={hintObject.id} className="room-idle-hint" style={hintStyle} aria-hidden="true">
+            <Icon name={hintObject.careKind === "room" ? "room" : hintObject.careKind} size={20} />
+          </div>
+        );
+      })}
       {!hasActiveOutsideSession ? (
         <AvatarLayer assets={assets} reaction={avatarReaction} bubble={avatarReaction ? reactionBubble[avatarReaction] : undefined} />
       ) : null}

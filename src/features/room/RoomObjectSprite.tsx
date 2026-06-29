@@ -7,6 +7,7 @@ type RoomObjectSpriteProps = {
   asset?: string;
   layout: RoomObjectLayout;
   state: RoomObjectState["state"];
+  isHovered?: boolean;
 };
 
 type RoomObjectSpriteStyle = CSSProperties & {
@@ -16,7 +17,7 @@ type RoomObjectSpriteStyle = CSSProperties & {
   "--room-sprite-scale-x": string;
 };
 
-export function RoomObjectSprite({ id, asset, layout, state }: RoomObjectSpriteProps) {
+export function RoomObjectSprite({ id, asset, layout, state, isHovered = false }: RoomObjectSpriteProps) {
   const { sprite } = layout;
   const style = {
     "--room-sprite-x": `${sprite.x}%`,
@@ -27,7 +28,7 @@ export function RoomObjectSprite({ id, asset, layout, state }: RoomObjectSpriteP
   } as RoomObjectSpriteStyle;
 
   return (
-    <div className={`room-object-sprite room-object-sprite--${id}`} style={style} data-state={state} aria-hidden="true">
+    <div className={`room-object-sprite room-object-sprite--${id}`} style={style} data-state={state} data-hovered={isHovered ? "true" : undefined} aria-hidden="true">
       {asset ? (
         <img className="room-object-asset" src={asset} alt="" />
       ) : (

@@ -7,6 +7,7 @@ type RoomHotspotProps = {
   layout: RoomObjectLayout;
   state: RoomObjectState["state"];
   onClick: () => void;
+  onHoverChange: (isHovered: boolean) => void;
 };
 
 const stateText: Record<RoomObjectState["state"], string> = {
@@ -23,7 +24,7 @@ type RoomHotspotStyle = CSSProperties & {
   "--room-hotspot-height": string;
 };
 
-export function RoomHotspot({ object, layout, state, onClick }: RoomHotspotProps) {
+export function RoomHotspot({ object, layout, state, onClick, onHoverChange }: RoomHotspotProps) {
   const hotspot = getRoomObjectHotspot(layout);
   const style: RoomHotspotStyle = {
     "--room-hotspot-x": `${hotspot.x}%`,
@@ -36,10 +37,14 @@ export function RoomHotspot({ object, layout, state, onClick }: RoomHotspotProps
   return (
     <button
       type="button"
-      className={`room-hotspot room-hotspot--${object.id} focus-ring`}
+      className={`room-hotspot room-hotspot--${object.id}`}
       style={style}
       data-state={state}
       onClick={onClick}
+      onFocus={() => onHoverChange(true)}
+      onBlur={() => onHoverChange(false)}
+      onMouseEnter={() => onHoverChange(true)}
+      onMouseLeave={() => onHoverChange(false)}
       aria-label={`${object.label}. ${object.prompt} Current state: ${stateText[state]}.`}
     >
       <span className="sr-only">{object.label}</span>
