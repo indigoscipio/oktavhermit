@@ -31,11 +31,7 @@
 
 .app-frame {
   position: relative;
-  background:
-    radial-gradient(circle at 14% 18%, rgba(155, 177, 103, 0.2) 0 3px, transparent 4px),
-    radial-gradient(circle at 82% 12%, rgba(250, 221, 174, 0.8) 0 4px, transparent 5px),
-    radial-gradient(circle at 8% 70%, rgba(201, 121, 77, 0.14) 0 4px, transparent 5px),
-    var(--color-bg);
+  background: var(--color-bg);
 }
 
 .app-header {
