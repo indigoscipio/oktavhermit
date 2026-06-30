@@ -1,5 +1,6 @@
 import { CARE_LABELS } from "../../domain/defaults";
 import type { CareKind } from "../../domain/types";
+import { AssetIcon, careIconMap } from "../../ui/AssetIcon";
 import { BottomSheet } from "../../ui/BottomSheet";
 import { Button } from "../../ui/Button";
 import { useEffect, useState } from "react";
@@ -14,14 +15,14 @@ type ObjectActionSheetProps = {
 };
 
 const actionCopy: Record<CareKind, string> = {
-  water: "Drink one glass?",
-  light: "Visit the window?",
-  food: "Eat something small?",
+  water: "Drink one glass of water?",
+  light: "Visit the window for a little light?",
+  food: "Eat something smol?",
   movement: "Stretch for 2 minutes?",
-  hygiene: "Wash up?",
+  hygiene: "Wash up for a moment?",
   rest: "Rest for a moment?",
-  room: "Clear one small surface?",
-  outside: "Step out for a moment?",
+  room: "Clear one smol surface?",
+  outside: "Be careful! The outside can be a beautiful and dangerous place.",
 };
 
 const firstActionCopy: Record<CareKind, string> = {
@@ -45,14 +46,14 @@ const repeatActionCopy: Partial<Record<CareKind, string>> = {
 const repeatableCareKinds: CareKind[] = ["water", "food", "movement", "rest", "outside"];
 
 const alreadyDoneCopy: Partial<Record<CareKind, string>> = {
-  water: "Already logged today. Want to add another?",
-  food: "Already logged today. Want to add another?",
+  water: "Already logged today. Want to drink one more glass?",
+  food: "Already logged today. Want to eat another smol thing?",
   movement: "You already moved today. Stretch again for 2 minutes?",
-  rest: "You already rested today. Rest again for a moment?",
-  light: "Already done today. Small care counts.",
-  hygiene: "Already done today. Small care counts.",
-  room: "Already done today. Small care counts.",
-  outside: "Step out again for a moment?",
+  rest: "You already rested today. Do you want to rest again for a moment?",
+  light: "Already done today. Smol care counts.",
+  hygiene: "Already done today. Smol care counts.",
+  room: "Already done today. Smol care counts.",
+  outside: "Be careful! The outside can be a beautiful and dangerous place.",
 };
 
 export function ObjectActionSheet({ object, onClose, onCareDone, onStartOutside }: ObjectActionSheetProps) {
@@ -83,30 +84,38 @@ export function ObjectActionSheet({ object, onClose, onCareDone, onStartOutside 
 
   return (
     <BottomSheet isOpen={Boolean(object)} title={CARE_LABELS[object.careKind]} onClose={onClose}>
-      <div className="space-y-4">
+      <div className="space-y-5">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center">
+          <AssetIcon name={careIconMap[object.careKind]} size={72} />
+        </div>
         <div>
-          <p className="text-xl text-ink">{bodyCopy}</p>
-          {isOutside && !isOutsideActive ? <p className="mt-2 text-muted">Your room will wait.</p> : null}
+          <h2 className="text-3xl font-bold text-ink">{isOutside ? "Go outside?" : `${CARE_LABELS[object.careKind]}?`}</h2>
+          <p className="mt-3 text-xl leading-relaxed text-muted">{bodyCopy}</p>
         </div>
         {isOutside && !isOutsideActive ? (
-          <div className="rounded-2xl border border-warm/20 bg-panel/60 p-4">
-            <p className="text-sm uppercase tracking-wide text-muted">Take this with you:</p>
-            <p className="mt-1 text-xl font-bold text-ink">{outsideGift.name}</p>
-            <p className="mt-1 text-muted">{outsideGift.line}</p>
+          <div className="rounded-bocchi border border-moss bg-successSoft/50 p-4 text-left">
+            <p className="text-center text-sm font-bold uppercase tracking-[0.18em] text-muted">Take this with you:</p>
+            <div className="mt-3 flex items-center gap-4 border-t border-moss/40 pt-3">
+              <AssetIcon name={outsideGift.icon} size={64} />
+              <div>
+                <p className="text-xl font-bold text-ink">{outsideGift.name}</p>
+                <p className="mt-1 text-muted">{outsideGift.line}</p>
+              </div>
+            </div>
           </div>
         ) : null}
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3">
           {isOutsideActive || (isAlreadyDone && !isRepeatable) ? (
-            <Button className="flex-1" variant="secondary" onClick={onClose}>Close</Button>
+            <Button className="w-full" variant="secondary" onClick={onClose}>Close</Button>
           ) : isOutside ? (
-            <Button className="flex-1" onClick={onStartOutside}>Start outside</Button>
+            <Button className="w-full" onClick={onStartOutside}>Go Outside</Button>
           ) : (
-            <Button className="flex-1" onClick={() => onCareDone(object.careKind)}>{primaryCopy}</Button>
+            <Button className="w-full" onClick={() => onCareDone(object.careKind)}>{primaryCopy}</Button>
           )}
           {isOutside && !isOutsideActive ? (
-            <Button className="flex-1" variant="secondary" onClick={onClose}>Stay in room</Button>
+            <Button className="w-full" variant="secondary" onClick={onClose}>Stay in room</Button>
           ) : isAlreadyDone && !isRepeatable ? null : (
-            <Button className="flex-1" variant="secondary" onClick={onClose}>Not now</Button>
+            <Button className="w-full" variant="secondary" onClick={onClose}>Maybe later</Button>
           )}
         </div>
       </div>

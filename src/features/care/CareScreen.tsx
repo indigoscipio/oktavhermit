@@ -3,7 +3,6 @@ import { CARE_LABELS } from "../../domain/defaults";
 import { getLocalDay } from "../../domain/dates";
 import { getActiveOutsideSession } from "../../domain/outside";
 import type { BocchiData, CareLog } from "../../domain/types";
-import { Card } from "../../ui/Card";
 import { CareStatusItem } from "./CareStatusItem";
 
 type CareScreenProps = {
@@ -18,35 +17,42 @@ export function CareScreen({ data, now }: CareScreenProps) {
   const intro = getCareIntro(status, isOutsideActive);
 
   return (
-    <div className="space-y-5">
-      <Card>
-        <p className="text-sm uppercase tracking-wide text-muted">{intro.label}</p>
-        <h1 className="text-4xl font-bold text-ink">{intro.heading}</h1>
-        <p className="mt-3 text-lg text-muted">{intro.body}</p>
-      </Card>
-      <Card>
-        <ul className="space-y-3">
+    <div className="space-y-7 pb-2">
+      <header>
+        <h1 className="text-4xl font-bold text-ink">Today</h1>
+        <p className="mt-2 text-lg text-muted">{intro.body}</p>
+      </header>
+
+      <section aria-label="Care areas">
+        <ul className="space-y-4">
           {status.map((item) => (
             <CareStatusItem key={item.kind} status={item} isOutsideActive={isOutsideActive} />
           ))}
         </ul>
-      </Card>
-      <Card>
-        <h2 className="mb-3 text-2xl font-bold text-ink">Recent activity</h2>
+      </section>
+
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-ink">Recent</h2>
+          <span className="text-lg font-semibold text-muted underline underline-offset-4">Show All</span>
+        </div>
         {recentLogs.length > 0 ? (
-          <ul className="space-y-2">
+          <ul className="rounded-bocchi border border-border bg-paper px-4 py-2 shadow-bocchi">
             {recentLogs.map((log) => (
-              <li key={log.id} className="flex items-center justify-between gap-3 rounded-2xl bg-panel/50 px-4 py-3 text-muted">
-                <span className="font-semibold text-ink">{formatTime(log.createdAt)}</span>
-                <span className="flex-1">{CARE_LABELS[log.kind]}</span>
-                {formatLogValue(log) ? <span>{formatLogValue(log)}</span> : null}
+              <li key={log.id} className="flex items-center justify-between gap-3 border-b border-border py-3 last:border-b-0">
+                <span className="text-xl font-bold text-ink">{CARE_LABELS[log.kind]}</span>
+                <span className="text-lg text-ink">{formatTime(log.createdAt)}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-lg text-muted">Nothing logged yet today.</p>
+          <p className="rounded-bocchi border border-border bg-paper p-4 text-lg text-muted shadow-bocchi">Nothing logged yet today.</p>
         )}
-      </Card>
+      </section>
+
+      <p className="text-center text-xl leading-relaxed text-muted">
+        Smol steps, your way.<br />That’s enough. ❤️
+      </p>
     </div>
   );
 }
@@ -67,8 +73,8 @@ function getCareIntro(status: ReturnType<typeof getTodayStatus>, isOutsideActive
   if (totalCount > 0 && doneCount === totalCount) {
     return {
       label: "Today",
-      heading: "Small world cared for.",
-      body: "Rest now. No need to do more.",
+      heading: "Smol world cared for.",
+      body: "Your smol world feels cared for. Rest now.",
     };
   }
 
@@ -83,15 +89,15 @@ function getCareIntro(status: ReturnType<typeof getTodayStatus>, isOutsideActive
   if (doneCount > 0) {
     return {
       label: "Today",
-      heading: "Small care counts.",
-      body: "You’ve cared for part of your small world today.",
+      heading: "Smol care counts.",
+      body: "You’ve cared for part of your smol world today.",
     };
   }
 
   return {
     label: "Today",
-    heading: "Begin small.",
-    body: "One small action is enough to start.",
+    heading: "Begin smol.",
+    body: "One smol action is enough to start.",
   };
 }
 
@@ -111,13 +117,5 @@ function formatTime(value: string): string {
     return "--:--";
   }
 
-  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-}
-
-function formatLogValue(log: CareLog): string | undefined {
-  if ((log.kind === "movement" || log.kind === "outside") && typeof log.value === "number") {
-    return `${log.value} min`;
-  }
-
-  return undefined;
+  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }

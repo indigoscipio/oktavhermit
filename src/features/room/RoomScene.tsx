@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from "react";
 import type { RoomObjectConfig, RoomObjectId, RoomObjectState } from "../../domain/types";
-import { Icon } from "../../ui/Icon";
+import { AssetIcon, careIconMap } from "../../ui/AssetIcon";
 import { SHOW_HOTSPOTS, type RoomObjectLayout } from "./roomLayout";
 import { AvatarLayer } from "./AvatarLayer";
 import { DEFAULT_ROOM_ASSETS, type RoomAssetMap } from "./roomAssets";
@@ -17,6 +17,7 @@ type RoomSceneProps = {
   assets?: RoomAssetMap;
   hasActiveOutsideSession: boolean;
   avatarReaction?: AvatarReaction;
+  avatarBubble?: string;
   idleHintObjectIds?: RoomObjectId[];
   onObjectClick: (object: RoomSceneObject) => void;
 };
@@ -25,17 +26,6 @@ export type RoomSceneObject = RoomObjectConfig & {
   objectId: RoomObjectState["objectId"];
   state: RoomObjectState["state"];
   layout: RoomObjectLayout;
-};
-
-const reactionBubble: Record<AvatarReaction, string> = {
-  water: ":)",
-  food: "full",
-  light: "sun",
-  movement: "stretch",
-  hygiene: "fresh",
-  rest: "zzz",
-  room: "nice",
-  back: "back",
 };
 
 type RoomHintStyle = CSSProperties & {
@@ -52,6 +42,7 @@ export function RoomScene({
   assets = DEFAULT_ROOM_ASSETS,
   hasActiveOutsideSession,
   avatarReaction,
+  avatarBubble,
   idleHintObjectIds = [],
   onObjectClick,
 }: RoomSceneProps) {
@@ -84,12 +75,12 @@ export function RoomScene({
 
         return (
           <div key={hintObject.id} className="room-idle-hint" style={hintStyle} aria-hidden="true">
-            <Icon name={hintObject.careKind === "room" ? "room" : hintObject.careKind} size={20} />
+            <AssetIcon name={careIconMap[hintObject.careKind]} size={42} />
           </div>
         );
       })}
       {!hasActiveOutsideSession ? (
-        <AvatarLayer assets={assets} reaction={avatarReaction} bubble={avatarReaction ? reactionBubble[avatarReaction] : undefined} />
+        <AvatarLayer assets={assets} reaction={avatarReaction} bubble={avatarBubble} />
       ) : null}
       {hasActiveOutsideSession ? (
         <div className="absolute left-1/2 top-1/2 z-10 w-56 -translate-x-1/2 -translate-y-1/2 rounded-bocchi border border-ink/10 bg-paper/90 p-4 text-center text-ink">

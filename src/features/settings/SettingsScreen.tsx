@@ -2,6 +2,7 @@ import { CARE_KINDS, CARE_LABELS } from "../../domain/defaults";
 import { getActiveOutsideSession } from "../../domain/outside";
 import type { BocchiData, CareKind } from "../../domain/types";
 import { exportBocchiData, resetBocchiData } from "../../storage/bocchiStorage";
+import { AssetIcon, careIconMap } from "../../ui/AssetIcon";
 import { Button } from "../../ui/Button";
 import { Card } from "../../ui/Card";
 import { Dialog } from "../../ui/Dialog";
@@ -75,56 +76,58 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
   }
 
   return (
-    <div className="space-y-5">
-      <Card>
-        <p className="text-sm uppercase tracking-wide text-muted">Settings</p>
-        <h1 className="text-4xl font-bold text-ink">Keep Bocchi small.</h1>
-        <p className="mt-3 text-lg text-muted">Choose what appears in your room.</p>
-      </Card>
+    <div className="space-y-6 pb-2">
+      <h1 className="text-4xl font-bold text-ink">Settings</h1>
 
       <Card>
-        <label className="block text-2xl font-bold text-ink" htmlFor="settings-name">Name</label>
-        <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-          <input
-            id="settings-name"
-            className="focus-ring min-w-0 flex-1 rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3 text-lg text-ink placeholder:text-muted"
-            type="text"
-            maxLength={40}
-            placeholder="Your name"
-            value={draftName}
-            onChange={(event) => setDraftName(event.currentTarget.value.slice(0, 40))}
-          />
+        <label className="block text-xl font-bold text-ink" htmlFor="settings-name">Name</label>
+        <div className="mt-3 flex gap-3">
+          <div className="relative min-w-0 flex-1">
+            <Icon name="user" size={28} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+            <input
+              id="settings-name"
+              className="focus-ring min-h-14 w-full rounded-[1.15rem] border border-ink/20 bg-white px-4 py-3 pl-14 text-lg text-ink placeholder:text-muted shadow-bocchi"
+              type="text"
+              maxLength={40}
+              placeholder="Enter your name..."
+              value={draftName}
+              onChange={(event) => setDraftName(event.currentTarget.value.slice(0, 40))}
+            />
+          </div>
           <Button onClick={handleNameSave}>Save name</Button>
         </div>
       </Card>
 
-      <Card>
+      <Card className="overflow-hidden p-0">
         <details className="group">
-          <summary className="focus-ring flex cursor-pointer list-none items-start justify-between gap-4 rounded-2xl">
-            <span>
+          <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-4 p-5">
+            <span className="text-left">
               <h2 className="text-2xl font-bold text-ink">Care areas</h2>
-              <p className="mt-1 text-muted">Choose which care areas appear in Today.</p>
+              <p className="mt-1 text-lg text-muted">Which care areas appear in today</p>
             </span>
-            <Icon name="chevronDown" size={22} className="mt-1 shrink-0 text-muted transition-transform group-open:rotate-180" />
+            <Icon name="chevronDown" size={34} className="shrink-0 text-muted transition-transform group-open:rotate-180" />
           </summary>
-          <div className="mt-4 space-y-3">
+          <div className="border-t border-border px-5 py-2">
             {CARE_KINDS.map((kind) => {
               const checked = data.settings.enabledCareKinds.includes(kind);
               const disabled = kind === "outside" && Boolean(activeOutside) && checked;
 
               return (
-                <label key={kind} className="flex items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-panel/50 px-4 py-3">
-                  <span className="flex items-center gap-3 text-lg font-semibold text-ink">
-                    <Icon name={kind === "room" ? "room" : kind} size={22} />
+                <label key={kind} className="flex items-center justify-between gap-4 border-b border-border py-3 last:border-b-0">
+                  <span className="flex items-center gap-3 text-xl font-bold text-ink">
+                    <AssetIcon name={careIconMap[kind]} size={40} />
                     {CARE_LABELS[kind]}
                   </span>
                   <input
-                    className="focus-ring h-6 w-6 accent-warm"
+                    className="peer sr-only"
                     type="checkbox"
                     checked={checked}
                     disabled={disabled}
                     onChange={() => toggleCareKind(kind)}
                   />
+                  <span className={`flex h-10 w-[70px] items-center rounded-full p-1 transition ${checked ? "bg-moss" : "bg-stone-200"} ${disabled ? "opacity-60" : ""}`}>
+                    <span className={`h-8 w-8 rounded-full bg-white shadow transition ${checked ? "translate-x-[30px]" : ""}`} />
+                  </span>
                 </label>
               );
             })}
@@ -132,22 +135,27 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
         </details>
       </Card>
 
-      <Card>
-        <h2 className="mb-3 text-2xl font-bold text-ink">Your data</h2>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button onClick={handleExport}><Icon name="export" size={20} className="mr-2" />Export data</Button>
-          <Button variant="danger" onClick={() => setIsClearOpen(true)}><Icon name="delete" size={20} className="mr-2" />Clear all data</Button>
+      <Card className="overflow-hidden p-0">
+        <div className="p-5">
+          <h2 className="text-2xl font-bold text-ink">Export/Import</h2>
+          <p className="mt-1 text-lg text-muted">Keep a copy of your local Bocchi data.</p>
         </div>
+        <button className="focus-ring flex w-full items-center justify-between border-t border-border px-5 py-4 text-left text-xl font-bold text-ink" type="button" onClick={handleExport}>
+          <span className="flex items-center gap-3"><Icon name="export" size={32} />Export All Data</span>
+          <Icon name="chevronRight" size={26} className="text-muted" />
+        </button>
+        <button className="focus-ring flex w-full items-center justify-between border-t border-border px-5 py-4 text-left text-xl font-bold text-red-700" type="button" onClick={() => setIsClearOpen(true)}>
+          <span className="flex items-center gap-3"><Icon name="delete" size={32} />Clear All Data</span>
+          <Icon name="chevronRight" size={26} className="text-muted" />
+        </button>
       </Card>
 
-      <Card>
-        <h2 className="mb-3 text-2xl font-bold text-ink">Privacy</h2>
-        <p className="text-lg leading-relaxed text-muted">
-          Bocchi stores your data locally on this device. There is no account, no cloud sync, no ads, and no tracking. You can export or clear your data anytime.
-        </p>
-        <p className="mt-3 text-lg leading-relaxed text-muted">
-          Because your data stays in this browser, clearing browser data may remove it. Export a backup if you want to keep it.
-        </p>
+      <Card className="flex items-center gap-4 border-warning bg-warningSoft">
+        <AssetIcon name="lock" size={58} />
+        <div>
+          <h2 className="text-2xl font-bold text-ink">Your Privacy Matters</h2>
+          <p className="mt-1 text-lg leading-relaxed text-muted">Stored locally on this device. No account, no cloud sync, no tracking.</p>
+        </div>
       </Card>
 
       <Dialog isOpen={isClearOpen} title="Clear all data?" onClose={() => setIsClearOpen(false)}>
@@ -155,19 +163,19 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
           <p className="text-lg text-muted">This removes your Bocchi room care logs and outside sessions from this browser.</p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button variant="danger" onClick={handleClear}>Clear data</Button>
-            <Button variant="secondary" onClick={() => setIsClearOpen(false)}>Not now</Button>
+            <Button variant="secondary" onClick={() => setIsClearOpen(false)}>Maybe later</Button>
           </div>
         </div>
       </Dialog>
 
-      <footer className="pb-2 text-center text-sm text-muted">
+      <footer className="pb-2 text-center text-base leading-relaxed text-muted">
         bocchi by{" "}
         <a className="font-semibold text-ink underline decoration-warm/40 underline-offset-4" href="https://oktavsoftware.com/" target="_blank" rel="noreferrer">
           oktavsoftware
         </a>{" "}
-        version 0.0.0{" "}
+        version 1.0.0{" "}
         <a className="font-semibold text-ink underline decoration-warm/40 underline-offset-4" href="https://github.com/indigoscipio/oktavhermit" target="_blank" rel="noreferrer">
-          GitHub
+          GitHub Link
         </a>
       </footer>
     </div>

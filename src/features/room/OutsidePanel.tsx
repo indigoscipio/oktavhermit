@@ -1,7 +1,7 @@
 import { getOutsideElapsedSeconds } from "../../domain/outside";
 import type { OutsideSession } from "../../domain/types";
+import { AssetIcon } from "../../ui/AssetIcon";
 import { Button } from "../../ui/Button";
-import { Card } from "../../ui/Card";
 
 type OutsidePanelProps = {
   session: OutsideSession;
@@ -9,35 +9,38 @@ type OutsidePanelProps = {
   onReturn: () => void;
 };
 
-function formatElapsed(seconds: number): string {
-  const cappedSeconds = Math.min(seconds, 99 * 60 * 60 + 59 * 60 + 59);
-  const hours = Math.floor(cappedSeconds / 3600);
-  const minutes = Math.floor((cappedSeconds % 3600) / 60);
-  const remainingSeconds = cappedSeconds % 60;
+function getElapsedParts(seconds: number) {
+  const cappedSeconds = Math.min(seconds, 99 * 60 + 59);
 
-  if (hours > 0) {
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
-  }
-
-  return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+  return {
+    minutes: Math.floor(cappedSeconds / 60),
+    seconds: cappedSeconds % 60,
+  };
 }
 
 export function OutsidePanel({ session, now, onReturn }: OutsidePanelProps) {
   const elapsedSeconds = getOutsideElapsedSeconds(session, now);
+  const elapsed = getElapsedParts(elapsedSeconds);
 
   return (
-    <Card className="flex min-h-[420px] items-center justify-center border-skysoft bg-skysoft/25">
-      <div className="space-y-5 text-center">
-        <div>
-          <p className="text-sm uppercase tracking-wide text-muted">Outside</p>
-          <h2 className="text-3xl font-bold text-ink">You are outside.</h2>
+    <div className="flex min-h-[68vh] items-center justify-center">
+      <section className="w-full rounded-[2rem] border border-border bg-white p-8 text-center shadow-bocchi">
+        <AssetIcon name="tree" size={82} className="mx-auto" />
+        <h2 className="mt-5 text-4xl font-bold text-ink">You are outside.</h2>
+        <p className="mx-auto mt-4 max-w-xs text-xl leading-relaxed text-muted">Be careful! The outside can be a beautiful and dangerous place.</p>
+        <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center rounded-bocchi border border-ink/10 bg-white p-5" aria-live="polite">
+          <div>
+            <p className="text-6xl font-bold tabular-nums text-ink">{String(elapsed.minutes).padStart(2, "0")}</p>
+            <p className="mt-2 text-lg text-muted">Minute</p>
+          </div>
+          <p className="text-6xl font-bold text-ink">:</p>
+          <div>
+            <p className="text-6xl font-bold tabular-nums text-ink">{String(elapsed.seconds).padStart(2, "0")}</p>
+            <p className="mt-2 text-lg text-muted">Seconds</p>
+          </div>
         </div>
-        <p className="text-5xl font-bold tabular-nums text-ink" aria-live="polite">{formatElapsed(elapsedSeconds)}</p>
-        <p className="text-lg text-muted">Come back whenever.</p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Button onClick={onReturn}>I'm back</Button>
-        </div>
-      </div>
-    </Card>
+        <Button className="mt-6 w-full" onClick={onReturn}>I'm Home</Button>
+      </section>
+    </div>
   );
 }

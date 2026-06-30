@@ -19,14 +19,14 @@ type RoomScreenProps = {
 };
 
 const doneCopy: Record<CareKind, string> = {
-  water: "Water logged. Small care counts.",
-  food: "Food logged. Small care counts.",
-  light: "Light logged. Small care counts.",
-  movement: "Movement logged. Small care counts.",
-  hygiene: "Hygiene logged. Small care counts.",
+  water: "Water logged. Smol care counts.",
+  food: "Food logged. Smol care counts.",
+  light: "Light logged. Smol care counts.",
+  movement: "Movement logged. Smol care counts.",
+  hygiene: "Hygiene logged. Smol care counts.",
   rest: "Rest logged. Take it easy.",
-  room: "Room care logged. Small care counts.",
-  outside: "Outside logged. Small care counts.",
+  room: "Room care logged. Smol care counts.",
+  outside: "Outside logged. Smol care counts.",
 };
 
 const avatarReactionByKind: Partial<Record<CareKind, AvatarReaction>> = {
@@ -39,6 +39,17 @@ const avatarReactionByKind: Partial<Record<CareKind, AvatarReaction>> = {
   room: "room",
 };
 
+const avatarBubbleCopy: Record<AvatarReaction, string[]> = {
+  water: ["hydrated!", "ah, fresh!", "water acquired :)"],
+  food: ["gulp... full!", "that was good!", "snack secured :)"],
+  light: ["the sun!!", "too bright... nice", "tiny sun time"],
+  movement: ["bones cracked", "that helped!", "stretch complete"],
+  hygiene: ["fresh again!", "soap victory", "clean-ish win"],
+  rest: ["ZzZz", "tiny recharge", "rest mode on"],
+  room: ["room first!", "one surface down", "smol room win"],
+  back: ["outside survived", "nightmare over :(", "home again"],
+};
+
 const DEBUG_IDLE_HINT = false;
 const IDLE_HINT_DELAY_MS = DEBUG_IDLE_HINT ? 800 : 24000;
 const IDLE_HINT_VISIBLE_MS = DEBUG_IDLE_HINT ? 999999 : 5200;
@@ -48,6 +59,7 @@ export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint
   const activeOutsideSession = getActiveOutsideSession(data);
   const [selectedObject, setSelectedObject] = useRoomSelection();
   const [avatarReaction, setAvatarReaction] = useState<AvatarReaction | undefined>();
+  const [avatarBubble, setAvatarBubble] = useState<string | undefined>();
   const [idleHintObjectId, setIdleHintObjectId] = useState<RoomObjectId | undefined>();
   const avatarTimerRef = useRef<number | undefined>(undefined);
   const idleTimerRef = useRef<number | undefined>(undefined);
@@ -60,8 +72,9 @@ export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint
       ? [idleHintObjectId]
       : undefined;
   const isSmallWorldCaredFor = coreObjects.length > 0 && coreObjects.every((object) => object.state === "done");
-  const roomTitle = data.settings.name ? `${data.settings.name}'s room` : "Care for your small world";
+  const roomTitle = data.settings.name ? `${data.settings.name}'s Room` : "Your Room";
   const roomDayLabel = `Day ${getAppDayNumber(data.startedAt, now)} · ${formatDisplayDate(now)}`;
+  const roomStatusText = getRoomStatusText(isSmallWorldCaredFor, idleCandidateObjectId);
 
   useEffect(() => {
     return () => {
@@ -121,12 +134,16 @@ export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint
     }
 
     setAvatarReaction(reaction);
+    setAvatarBubble(getAvatarBubble(reaction, avatarBubble));
 
     if (avatarTimerRef.current) {
       window.clearTimeout(avatarTimerRef.current);
     }
 
-    avatarTimerRef.current = window.setTimeout(() => setAvatarReaction(undefined), 2600);
+    avatarTimerRef.current = window.setTimeout(() => {
+      setAvatarReaction(undefined);
+      setAvatarBubble(undefined);
+    }, 2600);
   }
 
   function handleCareDone(kind: CareKind) {
@@ -167,9 +184,9 @@ export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint
   return (
     <div className="room-screen">
       <header className="room-screen-header">
-        <p className="text-sm uppercase tracking-wide text-muted">Room</p>
-        <h1 className="text-3xl font-bold text-ink">{roomTitle}</h1>
-        <p className="mt-1 text-sm text-muted">{roomDayLabel}</p>
+        <h1 className="text-4xl font-bold text-ink">{roomTitle}</h1>
+        <p className="mt-2 text-lg font-semibold text-ink">{roomDayLabel}</p>
+        <p className="mt-3 text-lg text-muted">{roomStatusText}</p>
       </header>
 
       <div className="room-viewport">
@@ -187,12 +204,13 @@ export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint
             objectLayouts={ROOM_LAYOUT}
             hasActiveOutsideSession={roomState.hasActiveOutsideSession}
             avatarReaction={avatarReaction}
+            avatarBubble={avatarBubble}
             idleHintObjectIds={idleHintObjectIds}
             onObjectClick={setSelectedObject}
           />
         </div>
         <p className="room-status-bubble">
-          {isSmallWorldCaredFor ? "Small world cared for. Take it easy." : "Tap a room object. One tiny action is enough."}
+          {isSmallWorldCaredFor ? "Smol world cared for. Take it easy." : "Tap a room object. One tiny thing is enough."}
         </p>
       </div>
 
@@ -208,4 +226,24 @@ export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint
 
 function useRoomSelection() {
   return useState<RoomSceneObject | undefined>(undefined);
+}
+
+function getAvatarBubble(reaction: AvatarReaction, currentBubble: string | undefined) {
+  const options = avatarBubbleCopy[reaction];
+  const freshOptions = options.filter((option) => option !== currentBubble);
+  const choices = freshOptions.length > 0 ? freshOptions : options;
+
+  return choices[Math.floor(Math.random() * choices.length)];
+}
+
+function getRoomStatusText(isSmallWorldCaredFor: boolean, idleCandidateObjectId: RoomObjectId | undefined) {
+  if (isSmallWorldCaredFor) {
+    return "Everything feels soft enough for now.";
+  }
+
+  if (idleCandidateObjectId) {
+    return "Pick one smol thing when you can.";
+  }
+
+  return "No pressure. Your room can wait.";
 }

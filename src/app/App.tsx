@@ -4,16 +4,17 @@ import { RoomScreen } from "../features/room/RoomScreen";
 import { SettingsScreen } from "../features/settings/SettingsScreen";
 import { loadBocchiData, saveBocchiData } from "../storage/bocchiStorage";
 import type { BocchiData } from "../domain/types";
+import { AssetIcon, type AssetIconName } from "../ui/AssetIcon";
 import { Button } from "../ui/Button";
-import { Icon, type IconName } from "../ui/Icon";
+import { Icon } from "../ui/Icon";
 import { LandingPage } from "./LandingPage";
 
 type Tab = "room" | "care" | "settings";
 
-const tabs: Array<{ id: Tab; label: string; icon: IconName }> = [
-  { id: "room", label: "Room", icon: "room" },
-  { id: "care", label: "Care", icon: "care" },
-  { id: "settings", label: "Settings", icon: "settings" },
+const tabs: Array<{ id: Tab; label: string; icon: AssetIconName }> = [
+  { id: "room", label: "Room", icon: "house" },
+  { id: "care", label: "Care", icon: "heart" },
+  { id: "settings", label: "Settings", icon: "gear" },
 ];
 
 export function App() {
@@ -73,12 +74,17 @@ function BocchiApp() {
 
   return (
     <div className="h-dvh overflow-hidden bg-bg text-ink">
-      <div className="mx-auto flex h-dvh w-full max-w-md flex-col bg-paper">
-        <header className="flex-none border-b border-ink/10 bg-paper/95 px-5 py-4 text-center">
-          <p className="text-3xl font-bold tracking-[0.18em] text-ink">bocchi</p>
+      <div className="app-frame mx-auto flex h-dvh w-full max-w-[480px] flex-col bg-bg">
+        <header className="app-header flex-none px-6 pb-5 pt-6">
+          <a className="focus-ring inline-flex items-center gap-3 rounded-bocchi" href="/" aria-label="Bocchi home">
+            <img className="h-12 w-auto pixel-icon" src="/logo.png" alt="bocchi" />
+          </a>
+          <button className="focus-ring inline-flex h-12 w-12 items-center justify-center rounded-bocchi text-muted hover:bg-panel" type="button" onClick={() => setActiveTab("settings")} aria-label="Open settings">
+            <Icon name="user" size={32} />
+          </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
+        <main className="flex-1 overflow-y-auto px-6 pb-8 pt-2">
           {activeTab === "room" ? (
             <RoomScreen data={data} now={now} onDataChange={updateData} onMessage={showToast} disableIdleHint={!data.settings.hasCompletedOnboarding} />
           ) : null}
@@ -89,24 +95,24 @@ function BocchiApp() {
         </main>
 
         {message ? (
-          <div className="pointer-events-none fixed inset-x-0 bottom-24 z-30 mx-auto w-full max-w-md px-4" aria-live="polite">
-            <p className="rounded-full border border-ink/10 bg-ink px-4 py-3 text-center text-sm text-paper shadow-bocchi">
+          <div className="pointer-events-none fixed inset-x-0 bottom-28 z-30 mx-auto w-full max-w-[480px] px-6" aria-live="polite">
+            <p className="rounded-[1.35rem] border border-white/10 bg-ink px-5 py-4 text-center text-lg font-bold text-white shadow-bocchi">
               {message}
             </p>
           </div>
         ) : null}
 
-        <nav className="sticky bottom-0 z-20 grid flex-none grid-cols-3 border-t border-ink/10 bg-paper" aria-label="Main navigation">
+        <nav className="sticky bottom-0 z-20 grid flex-none grid-cols-3 gap-2 rounded-t-[2rem] border border-border bg-surface-soft p-3 shadow-bocchi" aria-label="Main navigation">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                className={`focus-ring flex flex-col items-center gap-1 px-2 py-3 text-sm font-semibold transition ${activeTab === tab.id ? "bg-panel text-ink" : "text-muted hover:bg-panel/50"}`}
+                className={`focus-ring flex min-h-[88px] flex-col items-center justify-center gap-1 rounded-[1.35rem] px-2 py-3 text-sm font-bold transition ${activeTab === tab.id ? "border border-border bg-bg text-ink" : "text-muted hover:bg-panel"}`}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 aria-current={activeTab === tab.id ? "page" : undefined}
               >
-                <span className={`flex h-9 w-9 items-center justify-center rounded-full text-xl ${activeTab === tab.id ? "bg-warm/20" : ""}`} aria-hidden="true">
-                  <Icon name={tab.icon} size={24} />
+                <span className="flex h-11 w-11 items-center justify-center" aria-hidden="true">
+                  <AssetIcon name={tab.icon} style={activeTab === tab.id ? "linear-color" : "line"} size={40} />
                 </span>
                 <span>{tab.label}</span>
               </button>
@@ -114,14 +120,16 @@ function BocchiApp() {
           </nav>
 
         {!data.settings.hasCompletedOnboarding ? (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 p-4 backdrop-blur-sm">
-            <div role="dialog" aria-modal="true" aria-labelledby="onboarding-title" className="w-full max-w-sm rounded-bocchi border border-ink/10 bg-paper p-5 shadow-bocchi">
-              <h2 id="onboarding-title" className="text-2xl font-bold text-ink">Welcome to Bocchi.</h2>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 p-4 backdrop-blur-md">
+            <div role="dialog" aria-modal="true" aria-labelledby="onboarding-title" className="w-full max-w-[420px] rounded-[2rem] border border-border bg-white p-6 text-center shadow-bocchi">
+              <div className="mb-5 overflow-hidden rounded-bocchi border border-border bg-bg">
+                <img className="h-52 w-full object-cover pixel-art" src="/assets/hero-img.webp" alt="A cozy Bocchi room preview" />
+              </div>
+              <h2 id="onboarding-title" className="text-3xl font-bold text-ink">Welcome to your room!</h2>
               <p className="mt-4 text-lg leading-relaxed text-muted">
-                This is your small room. Tap objects to log tiny care: the cup for water, the window for light, the bed for rest, and the door for outside.
+                This is your smol room. Tap objects to log tiny care: water, light, food, rest, movement, hygiene, room care, and outside. Smol steps!
               </p>
-              <p className="mt-3 text-lg leading-relaxed text-muted">No streaks. No pressure. Just small care.</p>
-              <Button className="mt-5 w-full" onClick={handleBeginOnboarding}>Begin</Button>
+              <Button className="mt-6 w-full" onClick={handleBeginOnboarding}>OK</Button>
             </div>
           </div>
         ) : null}

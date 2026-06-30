@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Pixelfy+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap");
 @import "./tokens.css";
 
 @tailwind base;
@@ -7,8 +7,8 @@
 
 @layer base {
   html {
-    font-family: "Pixelfy Sans", system-ui, sans-serif;
-    color: var(--color-ink);
+    font-family: "Pixelify Sans", system-ui, sans-serif;
+    color: var(--color-text);
     background: var(--color-bg);
   }
 
@@ -16,6 +16,7 @@
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
+    background: var(--color-bg);
   }
 
   button,
@@ -29,5 +30,10 @@
 @layer components {
   .focus-ring {
     @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warm;
+  }
+
+  .pixel-icon,
+  .pixel-art {
+    image-rendering: pixelated;
   }
 }

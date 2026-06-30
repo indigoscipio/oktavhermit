@@ -2,10 +2,13 @@ import type { SVGProps } from "react";
 import {
   Check,
   ChevronDown,
+  ChevronRight,
+  Clock,
   Close,
   CloudSun,
   Coffee,
   Download,
+  InfoBox,
   Heart,
   Home,
   Moon,
@@ -15,6 +18,8 @@ import {
   Sparkles,
   Trash,
   Tree,
+  Upload,
+  User,
 } from "pixelarticons/react";
 
 export type IconName =
@@ -32,7 +37,12 @@ export type IconName =
   | "delete"
   | "done"
   | "chevronDown"
-  | "close";
+  | "chevronRight"
+  | "clock"
+  | "close"
+  | "info"
+  | "import"
+  | "user";
 
 type IconProps = SVGProps<SVGSVGElement> & {
   name: IconName;
@@ -54,7 +64,12 @@ const iconMap = {
   delete: Trash,
   done: Check,
   chevronDown: ChevronDown,
+  chevronRight: ChevronRight,
+  clock: Clock,
   close: Close,
+  info: InfoBox,
+  import: Upload,
+  user: User,
 };
 
 export function Icon({ name, size = 24, className = "", ...props }: IconProps) {
