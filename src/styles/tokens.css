@@ -45,12 +45,28 @@
 }
 
 .room-screen {
+  position: relative;
   display: flex;
   min-height: 100%;
   flex-direction: column;
 }
 
+.room-screen::before {
+  content: "";
+  position: absolute;
+  inset: -1.5rem;
+  z-index: 0;
+  background-image: url("/assets/app-bg-mobile.webp");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .room-screen-header {
+  position: relative;
+  z-index: 1;
   flex: none;
   padding: 0 0 0.75rem;
   text-align: center;
@@ -58,6 +74,7 @@
 
 .room-viewport {
   position: relative;
+  z-index: 1;
   flex: 1;
   min-height: 560px;
   overflow: hidden;
@@ -84,24 +101,6 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-}
-
-.room-status-bubble {
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 1.25rem;
-  z-index: 6;
-  margin: 0;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 1.35rem;
-  background: rgba(41, 37, 36, 0.94);
-  padding: 1rem;
-  text-align: center;
-  color: white;
-  font-size: 1.05rem;
-  font-weight: 700;
-  backdrop-filter: blur(4px);
 }
 
 .room-shell-asset,
@@ -335,9 +334,10 @@
   content: attr(data-bubble);
   position: absolute;
   left: 50%;
-  top: -42px;
-  min-width: 150px;
-  max-width: 220px;
+  bottom: calc(100% + 16px);
+  width: max-content;
+  min-width: 0;
+  max-width: min(220px, 72vw);
   padding: 0.7rem 0.9rem;
   border-radius: 0.9rem;
   background: rgba(41, 37, 36, 0.96);
@@ -346,6 +346,7 @@
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
+  white-space: normal;
   opacity: 0;
   transform: translate(-50%, 4px);
   transition: opacity 160ms ease, transform 160ms ease;
@@ -355,7 +356,7 @@
   content: "";
   position: absolute;
   left: 50%;
-  top: -9px;
+  bottom: calc(100% + 8px);
   width: 18px;
   height: 18px;
   transform: translateX(-50%) rotate(45deg);
@@ -373,14 +374,14 @@
   opacity: 1;
 }
 
-.tiny-bocchi[data-reaction="water"] { box-shadow: 0 0 0 5px rgba(168, 201, 197, 0.32), 0 4px 0 rgba(56, 45, 50, 0.08); }
-.tiny-bocchi[data-reaction="food"] { box-shadow: 0 0 0 5px rgba(201, 121, 77, 0.2), 0 4px 0 rgba(56, 45, 50, 0.08); }
-.tiny-bocchi[data-reaction="light"] { box-shadow: 0 0 0 5px rgba(244, 180, 111, 0.24), 0 4px 0 rgba(56, 45, 50, 0.08); }
-.tiny-bocchi[data-reaction="movement"] { transform: translateX(-50%) rotate(-4deg); box-shadow: 0 0 0 5px rgba(142, 160, 111, 0.24), 0 4px 0 rgba(56, 45, 50, 0.08); }
-.tiny-bocchi[data-reaction="hygiene"] { box-shadow: 0 0 0 5px rgba(168, 201, 197, 0.24), 0 4px 0 rgba(56, 45, 50, 0.08); }
-.tiny-bocchi[data-reaction="rest"] { box-shadow: 0 0 0 5px rgba(234, 220, 197, 0.8), 0 4px 0 rgba(56, 45, 50, 0.08); }
-.tiny-bocchi[data-reaction="room"] { box-shadow: 0 0 0 5px rgba(183, 201, 137, 0.28), 0 4px 0 rgba(56, 45, 50, 0.08); }
-.tiny-bocchi[data-reaction="back"] { box-shadow: 0 0 0 5px rgba(255, 249, 236, 0.85), 0 4px 0 rgba(56, 45, 50, 0.08); }
+.tiny-bocchi[data-reaction="water"] { box-shadow: 0 0 0 5px rgba(104, 152, 201, 0.28), 0 0 20px rgba(104, 152, 201, 0.28); }
+.tiny-bocchi[data-reaction="food"] { box-shadow: 0 0 0 5px rgba(201, 121, 77, 0.24), 0 0 20px rgba(245, 158, 11, 0.22); }
+.tiny-bocchi[data-reaction="light"] { box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.28), 0 0 24px rgba(255, 214, 145, 0.35); }
+.tiny-bocchi[data-reaction="movement"] { transform: translateX(-50%) rotate(-3deg); box-shadow: 0 0 0 5px rgba(104, 152, 201, 0.24), 0 0 22px rgba(104, 152, 201, 0.26); }
+.tiny-bocchi[data-reaction="hygiene"] { box-shadow: 0 0 0 5px rgba(95, 184, 172, 0.24), 0 0 20px rgba(95, 184, 172, 0.24); }
+.tiny-bocchi[data-reaction="rest"] { box-shadow: 0 0 0 5px rgba(147, 151, 210, 0.24), 0 0 22px rgba(104, 152, 201, 0.18); }
+.tiny-bocchi[data-reaction="room"] { box-shadow: 0 0 0 5px rgba(155, 177, 103, 0.28), 0 0 20px rgba(155, 177, 103, 0.22); }
+.tiny-bocchi[data-reaction="back"] { box-shadow: 0 0 0 5px rgba(201, 121, 77, 0.22), 0 0 22px rgba(255, 249, 236, 0.32); }
 
 @media (max-width: 640px) {
   .room-viewport { min-height: 500px; }

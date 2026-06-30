@@ -22,7 +22,7 @@ const faqs = [
 
 export function LandingPage() {
   return (
-    <div className="min-h-dvh bg-bg text-ink">
+    <div className="min-h-dvh bg-paper text-ink">
       <header className="border-b border-border bg-surface/80 px-5 py-4 backdrop-blur">
         <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4" aria-label="Landing navigation">
           <a className="focus-ring inline-flex items-center rounded-bocchi" href="/" aria-label="Bocchi home">
@@ -54,7 +54,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="bg-brandSoft/40 px-5 py-16">
+        <section className="bg-bg px-5 py-16">
           <div className="mx-auto max-w-6xl text-center">
             <h2 className="text-4xl font-bold text-ink">Care for your smol world</h2>
             <div className="mt-10 grid gap-8 md:grid-cols-3">
@@ -89,7 +89,7 @@ export function LandingPage() {
         </section>
 
         <section className="bg-warm px-5 py-16 text-center text-white">
-          <img className="mx-auto h-16 w-auto rounded-bocchi bg-white/20 p-2 pixel-icon" src="/logo.png" alt="" />
+          <img className="mx-auto h-20 w-20 rounded-bocchi bg-white/20 p-2 pixel-icon" src="/favicon-96x96.png" alt="" />
           <h2 className="mx-auto mt-8 max-w-2xl text-4xl font-bold leading-tight">For quiet people and closed curtains.</h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-white/90">
             Open your room, tap what needs care, and do one tiny thing. That is enough for today :)

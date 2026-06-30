@@ -209,9 +209,6 @@ export function RoomScreen({ data, now, onDataChange, onMessage, disableIdleHint
             onObjectClick={setSelectedObject}
           />
         </div>
-        <p className="room-status-bubble">
-          {isSmallWorldCaredFor ? "Smol world cared for. Take it easy." : "Tap a room object. One tiny thing is enough."}
-        </p>
       </div>
 
       <ObjectActionSheet

@@ -76,7 +76,7 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
   }
 
   return (
-    <div className="space-y-6 pb-2">
+    <div className="space-y-5 pb-2">
       <h1 className="text-4xl font-bold text-ink">Settings</h1>
 
       <Card>
@@ -98,22 +98,22 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
         </div>
       </Card>
 
-      <Card className="overflow-hidden p-0">
+      <Card className="overflow-hidden">
         <details className="group">
-          <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-4 p-5">
+          <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-4 rounded-smol">
             <span className="text-left">
               <h2 className="text-2xl font-bold text-ink">Care areas</h2>
               <p className="mt-1 text-lg text-muted">Which care areas appear in today</p>
             </span>
             <Icon name="chevronDown" size={34} className="shrink-0 text-muted transition-transform group-open:rotate-180" />
           </summary>
-          <div className="border-t border-border px-5 py-2">
+          <div className="mt-4 border-t border-border pt-2">
             {CARE_KINDS.map((kind) => {
               const checked = data.settings.enabledCareKinds.includes(kind);
               const disabled = kind === "outside" && Boolean(activeOutside) && checked;
 
               return (
-                <label key={kind} className="flex items-center justify-between gap-4 border-b border-border py-3 last:border-b-0">
+                <label key={kind} className="flex items-center justify-between gap-4 border-b border-border py-2.5 last:border-b-0">
                   <span className="flex items-center gap-3 text-xl font-bold text-ink">
                     <AssetIcon name={careIconMap[kind]} size={40} />
                     {CARE_LABELS[kind]}
@@ -135,16 +135,16 @@ export function SettingsScreen({ data, onDataChange, onMessage }: SettingsScreen
         </details>
       </Card>
 
-      <Card className="overflow-hidden p-0">
-        <div className="p-5">
+      <Card className="overflow-hidden">
+        <div>
           <h2 className="text-2xl font-bold text-ink">Export/Import</h2>
           <p className="mt-1 text-lg text-muted">Keep a copy of your local Bocchi data.</p>
         </div>
-        <button className="focus-ring flex w-full items-center justify-between border-t border-border px-5 py-4 text-left text-xl font-bold text-ink" type="button" onClick={handleExport}>
+        <button className="focus-ring mt-4 flex w-full items-center justify-between border-t border-border py-3 text-left text-xl font-bold text-ink" type="button" onClick={handleExport}>
           <span className="flex items-center gap-3"><Icon name="export" size={32} />Export All Data</span>
           <Icon name="chevronRight" size={26} className="text-muted" />
         </button>
-        <button className="focus-ring flex w-full items-center justify-between border-t border-border px-5 py-4 text-left text-xl font-bold text-red-700" type="button" onClick={() => setIsClearOpen(true)}>
+        <button className="focus-ring flex w-full items-center justify-between border-t border-border py-3 text-left text-xl font-bold text-red-700" type="button" onClick={() => setIsClearOpen(true)}>
           <span className="flex items-center gap-3"><Icon name="delete" size={32} />Clear All Data</span>
           <Icon name="chevronRight" size={26} className="text-muted" />
         </button>

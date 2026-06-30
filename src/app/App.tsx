@@ -76,9 +76,9 @@ function BocchiApp() {
     <div className="h-dvh overflow-hidden bg-bg text-ink">
       <div className="app-frame mx-auto flex h-dvh w-full max-w-[480px] flex-col bg-bg">
         <header className="app-header flex-none px-6 pb-5 pt-6">
-          <a className="focus-ring inline-flex items-center gap-3 rounded-bocchi" href="/" aria-label="Bocchi home">
+          <div className="inline-flex items-center gap-3 rounded-bocchi" aria-label="Bocchi">
             <img className="h-12 w-auto pixel-icon" src="/logo.png" alt="bocchi" />
-          </a>
+          </div>
           <button className="focus-ring inline-flex h-12 w-12 items-center justify-center rounded-bocchi text-muted hover:bg-panel" type="button" onClick={() => setActiveTab("settings")} aria-label="Open settings">
             <Icon name="user" size={32} />
           </button>
@@ -95,14 +95,14 @@ function BocchiApp() {
         </main>
 
         {message ? (
-          <div className="pointer-events-none fixed inset-x-0 bottom-28 z-30 mx-auto w-full max-w-[480px] px-6" aria-live="polite">
+          <div className="pointer-events-none fixed inset-x-0 bottom-36 z-30 mx-auto w-full max-w-[480px] px-6" aria-live="polite">
             <p className="rounded-[1.35rem] border border-white/10 bg-ink px-5 py-4 text-center text-lg font-bold text-white shadow-bocchi">
               {message}
             </p>
           </div>
         ) : null}
 
-        <nav className="sticky bottom-0 z-20 grid flex-none grid-cols-3 gap-2 rounded-t-[2rem] border border-border bg-surface-soft p-3 shadow-bocchi" aria-label="Main navigation">
+        <nav className="sticky bottom-0 z-20 grid flex-none grid-cols-3 gap-2 rounded-t-[2rem] border border-border bg-paper p-3 shadow-bocchi" aria-label="Main navigation">
             {tabs.map((tab) => (
               <button
                 key={tab.id}

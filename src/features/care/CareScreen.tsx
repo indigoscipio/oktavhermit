@@ -24,7 +24,7 @@ export function CareScreen({ data, now }: CareScreenProps) {
       </header>
 
       <section aria-label="Care areas">
-        <ul className="space-y-4">
+        <ul className="space-y-2">
           {status.map((item) => (
             <CareStatusItem key={item.kind} status={item} isOutsideActive={isOutsideActive} />
           ))}
